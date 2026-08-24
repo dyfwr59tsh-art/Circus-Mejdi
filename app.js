@@ -46,14 +46,15 @@ const jackpotValue = $("jackpotValue");
 const message = $("message");
 const freeSpinsEl = $("freeSpins");
 
-function freshState(){
-  return {
-    balance: DEFAULT_BALANCE,
-    jackpot: DEFAULT_JACKPOT,
-    betIndex: 0,
-    freeSpins: 0,
-    stats: {spins:0,wagered:0,paid:0,biggestWin:0,freeSpinsWon:0}
-  };
+function allowedSymbolsForReel(reel){
+  const arr = SYMBOLS.filter(s => s.id !== "SCAT");
+
+  if(reel===0 || reel===2 || reel===4){
+    const scatter = SYMBOLS.find(s => s.id === "SCAT");
+    arr.push({...scatter, weight:4});
+  }
+
+  return arr;
 }
 
 function loadState(){
