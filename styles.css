@@ -68,3 +68,12 @@ th{color:var(--gold)}
   display: block;
   margin: auto;
 }
+.symbol-img {
+  width: 82%;
+  height: 82%;
+  max-width: 110px;
+  max-height: 110px;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+}
