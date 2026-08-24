@@ -18,9 +18,6 @@ const SYMBOLS = [
   {id:"WILD", image:"circus_wild_v2.png", weight:3, pay:{3:40,4:200,5:0}},
   {id:"SCAT", image:"scatter.png", weight:0, pay:{}}
 ];
-
-// 25 fixed paylines, row indices 0..2.
-const LINES = [
 // 25 fixed paylines, row indices 0..2.
 const LINES = [
  [0,0,0,0,0],[1,1,1,1,1],[2,2,2,2,2],
