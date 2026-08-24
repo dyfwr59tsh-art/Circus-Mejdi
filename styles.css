@@ -61,3 +61,10 @@ th{color:var(--gold)}
   .meters{grid-template-columns:1fr}
   .controls{grid-template-columns:64px 64px 1fr}
 }
+.symbol-img {
+  width: 95%;
+  height: 95%;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+}
