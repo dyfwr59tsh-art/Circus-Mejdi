@@ -156,9 +156,6 @@ function renderGrid(grid,wins=new Set()){
   for(let r=0;r<3;r++){
     for(let c=0;c<5;c++){
       const cell=grid[c][r];
-      const div=document.createElement("div");
-      div.className="cell"+(wins.has(c+"-"+r)?" win":"");
-const cell=grid[c][r];
 const div=document.createElement("div");
 div.className="cell"+(wins.has(c+"-"+r)?" win":"");
 
@@ -169,15 +166,15 @@ icon.className="symbol-img";
 div.appendChild(icon);
 
 if(cell.bonus){
-      if(cell.bonus){
-        const b=document.createElement("span");
-        b.className="bonus";
-        b.textContent=short(cell.bonus);
-        div.appendChild(b);
-      }
-      div.style.gridColumn=String(c+1);
-      div.style.gridRow=String(r+1);
-      reelsEl.appendChild(div);
+  const b=document.createElement("span");
+  b.className="bonus";
+  b.textContent=short(cell.bonus);
+  div.appendChild(b);
+}
+
+div.style.gridColumn=String(c+1);
+div.style.gridRow=String(r+1);
+reelsEl.appendChild(div);
     }
   }
 }
