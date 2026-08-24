@@ -6,17 +6,17 @@ const DEFAULT_BALANCE = 10e9;
 const DEFAULT_JACKPOT = 6e9;
 
 const SYMBOLS = [
-  {id:"JUG", icon:"🤹", weight:5, pay:{3:30,4:125,5:300}},
-  {id:"ELE", icon:"🐘", weight:7, pay:{3:25,4:80,5:250}},
-  {id:"BEA", icon:"🐻", weight:9, pay:{3:15,4:60,5:175}},
-  {id:"PAN", icon:"🐼", weight:11, pay:{3:12,4:50,5:125}},
-  {id:"HAT", icon:"🎩", weight:13, pay:{3:10,4:40,5:100}},
-  {id:"A", icon:"A", weight:17, pay:{3:7,4:25,5:60}},
-  {id:"K", icon:"K", weight:18, pay:{3:7,4:25,5:60}},
-  {id:"Q", icon:"Q", weight:20, pay:{3:5,4:15,5:40}},
-  {id:"J", icon:"J", weight:22, pay:{3:5,4:15,5:40}},
-  {id:"WILD", icon:"🎪", weight:3, pay:{3:40,4:200,5:0}},
-  {id:"SCAT", icon:"🤡", weight:0, pay:{}}
+  {id:"JUG",  icon:"💎", weight:5,  pay:{3:30,4:125,5:300}},
+  {id:"ELE",  icon:"👑", weight:7,  pay:{3:25,4:80,5:250}},
+  {id:"BEA",  icon:"🦁", weight:9,  pay:{3:15,4:60,5:175}},
+  {id:"PAN",  icon:"🍀", weight:11, pay:{3:12,4:50,5:125}},
+  {id:"HAT",  icon:"🔔", weight:13, pay:{3:10,4:40,5:100}},
+  {id:"A",    icon:"⭐", weight:17, pay:{3:7,4:25,5:60}},
+  {id:"K",    icon:"❤️", weight:18, pay:{3:7,4:25,5:60}},
+  {id:"Q",    icon:"🍒", weight:20, pay:{3:5,4:15,5:40}},
+  {id:"J",    icon:"🍋", weight:22, pay:{3:5,4:15,5:40}},
+  {id:"WILD", icon:"🎪", weight:3,  pay:{3:40,4:200,5:0}},
+  {id:"SCAT", icon:"🎰", weight:0,  pay:{}}
 ];
 
 // 25 fixed paylines, row indices 0..2.
