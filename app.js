@@ -259,11 +259,43 @@ async function animateReels(targetGrid){
 
   renderGrid(targetGrid);
 }
+async function spin(oneOfAuto=false){
+  if(spinning) return;
+
+  const bet=BETS[state.betIndex];
+  const isFree=state.freeSpins>0;
+
+  if(!isFree && state.balance<bet){
+    message.textContent="Nicht genug Coins. Tippe auf COINS +.";
+    return;
+  }
+
+  spinning=true;
+  $("spinBtn").disabled=true;
+
+  if(isFree){
+    state.freeSpins--;
+  }else{
+    state.balance-=bet;
+    state.stats.wagered+=bet;
+  }
+
+  state.stats.spins++;
+  state.jackpot+=Math.round(bet*0.002);
+
   const grid=makeGrid();
+
+  await animateReels(grid);
+
   const result=scoreGrid(grid,bet);
+
   state.balance+=result.total;
   state.stats.paid+=result.total;
-  state.stats.biggestWin=Math.max(state.stats.biggestWin,result.total);
+  state.stats.biggestWin=Math.max(
+    state.stats.biggestWin,
+    result.total
+  );
+
   if(result.freeAward){
     state.freeSpins+=result.freeAward;
     state.stats.freeSpinsWon+=result.freeAward;
@@ -273,16 +305,19 @@ async function animateReels(targetGrid){
   winValue.textContent=fmt(result.total);
 
   if(result.freeAward){
-    message.textContent=`🎟 ${result.scatters} Scatter: ${result.freeAward} Freispiele · Gewinn ${short(result.total)}`;
+    message.textContent="🎪 JOKER AUF WALZE 1 · 3 · 5 — 10 FREISPIELE!";
   }else if(result.total>=bet*50){
     message.textContent=`🎉 HUGE WIN: ${short(result.total)}`;
   }else if(result.total>0){
     message.textContent=`Gewinn: ${short(result.total)}`;
   }else{
-    message.textContent=isFree?"Freispin ohne Gewinn.":"Kein Gewinn.";
+    message.textContent=isFree
+      ? "Freispin ohne Gewinn."
+      : "Kein Gewinn.";
   }
 
   updateUI();
+
   spinning=false;
   $("spinBtn").disabled=false;
 
