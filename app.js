@@ -16,7 +16,7 @@ const SYMBOLS = [
   {id:"Q",    image:"circus_Q_v2.png",        weight:20, pay:{3:5,4:15,5:40}},
   {id:"J",    image:"circus_J_v2.png",        weight:22, pay:{3:5,4:15,5:40}},
   {id:"WILD", image:"circus_wild_v2.png",     weight:3,  pay:{3:40,4:200,5:0}},
-  {id:"SCAT", {id:"SCAT", image:"scatter.png", weight:0, pay:{}}
+  {id:"SCAT", image:"scatter.png", weight:0, pay:{}}
 ];
 // 25 fixed paylines, row indices 0..2.
 const LINES = [
