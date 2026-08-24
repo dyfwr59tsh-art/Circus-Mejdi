@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#5b173d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Circus Chance" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Circus Chance</title>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="brand">🎪 CIRCUS CHANCE</div>
+        <div class="tagline">Private Demo · nur virtuelle Coins</div>
+      </div>
+      <button class="small" id="statsBtn">STATISTIK</button>
+    </header>
+
+    <section class="machine">
+      <div class="jackpot"><span>JACKPOT</span><strong id="jackpotValue">6.000.000.000</strong></div>
+
+      <div id="reels" class="reels" aria-label="Spielwalzen"></div>
+
+      <div class="payline-note">25 LINIEN</div>
+
+      <div class="meters">
+        <div class="meter"><span>GUTHABEN</span><strong id="balanceValue">10.000.000.000</strong></div>
+        <div class="meter"><span>EINSATZ</span><strong id="betValue">20.000.000</strong></div>
+        <div class="meter"><span>GEWINN</span><strong id="winValue">0</strong></div>
+      </div>
+
+      <div class="controls">
+        <button id="betDown" class="control secondary">−</button>
+        <button id="betUp" class="control secondary">+</button>
+        <button id="spinBtn" class="control spin">START</button>
+      </div>
+
+      <div class="quick-row">
+        <button id="auto10" class="small">AUTO ×10</button>
+        <button id="addCoinsBtn" class="small">COINS +</button>
+        <button id="rulesBtn" class="small">REGELN</button>
+      </div>
+
+      <div id="message" class="message">Bereit.</div>
+      <div id="freeSpins" class="freespins hidden">🎟 Freispiele: <strong>0</strong></div>
+    </section>
+
+    <section class="footnote">
+      <b>Hinweis:</b> Kein Echtgeld, keine Käufe, keine Auszahlung. Guthaben und Statistik werden nur auf diesem Gerät gespeichert.
+    </section>
+  </main>
+
+  <dialog id="coinsDialog">
+    <form method="dialog" class="dialog-card">
+      <h2>Virtuelle Coins hinzufügen</h2>
+      <div class="preset-grid">
+        <button type="button" data-add="100000000">+100M</button>
+        <button type="button" data-add="1000000000">+1B</button>
+        <button type="button" data-add="10000000000">+10B</button>
+        <button type="button" data-add="100000000000">+100B</button>
+      </div>
+      <label>Eigener Betrag
+        <input id="customCoins" type="number" inputmode="numeric" min="1" placeholder="z. B. 5000000000" />
+      </label>
+      <button type="button" id="customCoinsBtn">Betrag hinzufügen</button>
+      <button class="close">Schließen</button>
+    </form>
+  </dialog>
+
+  <dialog id="statsDialog">
+    <form method="dialog" class="dialog-card">
+      <h2>Statistik</h2>
+      <div id="statsContent"></div>
+      <button type="button" id="resetStatsBtn" class="danger">Statistik zurücksetzen</button>
+      <button class="close">Schließen</button>
+    </form>
+  </dialog>
+
+  <dialog id="rulesDialog">
+    <form method="dialog" class="dialog-card wide">
+      <h2>Spielregeln</h2>
+      <p>5 Walzen × 3 Reihen, 25 Gewinnlinien. Kombinationen werden von links nach rechts gezählt.</p>
+      <p><b>🎟 Scatter:</b> erscheint nur auf Walzen 1, 3 und 5. Drei Scatter geben 7 Freispiele.</p>
+      <p><b>🎪 Jackpot/Wild:</b> ersetzt normale Symbole. Fünf Jackpot-Symbole auf einer Gewinnlinie zahlen den angezeigten Jackpot.</p>
+      <p><b>Bonuswerte:</b> Einige Symbole auf Walzen 3, 4 und 5 können zusätzliche Coin-Werte tragen. Diese werden bei einem Liniengewinn zusätzlich ausgezahlt.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>3×</th><th>4×</th><th>5×</th></tr></thead>
+        <tbody>
+          <tr><td>🤹</td><td>30×</td><td>125×</td><td>300×</td></tr>
+          <tr><td>🐘</td><td>25×</td><td>80×</td><td>250×</td></tr>
+          <tr><td>🐻</td><td>15×</td><td>60×</td><td>175×</td></tr>
+          <tr><td>🐼</td><td>12×</td><td>50×</td><td>125×</td></tr>
+          <tr><td>🎩</td><td>10×</td><td>40×</td><td>100×</td></tr>
+          <tr><td>A / K</td><td>7×</td><td>25×</td><td>60×</td></tr>
+          <tr><td>Q / J</td><td>5×</td><td>15×</td><td>40×</td></tr>
+        </tbody>
+      </table>
+      <p class="muted">Diese Demo verwendet eigene, vereinfachte Wahrscheinlichkeiten. Sie ist kein Nachbau der Serverlogik eines anderen Spiels.</p>
+      <button class="close">Schließen</button>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
