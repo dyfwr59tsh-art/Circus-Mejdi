@@ -6,7 +6,7 @@ const DEFAULT_BALANCE = 10e9;
 const DEFAULT_JACKPOT = 6e9;
 
 const SYMBOLS = [
-  {id:"JUG", image:"circus_clown_v2.png",weight:5, pay:{3:30,4:125,5:300}},
+  {id:"JUG", image:"circus_clown_v2.png", weight:5, pay:{3:30,4:125,5:300}},
   {id:"ELE", image:"circus_elephant_v2.png", weight:7, pay:{3:25,4:80,5:250}},
   {id:"BEA", image:"circus_bear_v2.png", weight:9, pay:{3:15,4:60,5:175}},
   {id:"PAN", image:"circus_seal_v2.png", weight:11, pay:{3:12,4:50,5:125}},
