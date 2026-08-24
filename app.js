@@ -95,19 +95,24 @@ function weightedPick(arr){
 
 function makeGrid(){
   const grid=[];
+
   for(let c=0;c<5;c++){
     grid[c]=[];
+
     for(let r=0;r<3;r++){
       const base=weightedPick(allowedSymbolsForReel(c));
       const cell={...base, bonus:0};
+
       if(c>=2 && !["SCAT","WILD"].includes(cell.id) && Math.random()<0.16){
         const mult=[0.5,1,2,4,8,20][Math.floor(Math.random()*6)];
-        cell.bonus = BETS[state.betIndex]*mult;
+        cell.bonus=BETS[state.betIndex]*mult;
       }
-      grid[c][r]=cell;
-    }
+
+         grid[c][r]=cell;
   }
-  return grid;
+}
+
+return grid;
 }
 
 function lineResult(grid,line,bet){
@@ -135,21 +140,43 @@ function lineResult(grid,line,bet){
 function scoreGrid(grid,bet){
   let total=0;
   const wins=new Set();
+
   for(const line of LINES){
     const res=lineResult(grid,line,bet);
     total += res.pay;
     res.coords.forEach(([c,r])=>wins.add(c+"-"+r));
   }
 
+  // Scatter/Joker auf Walze 1, 3 und 5
+  const scatterReels=[0,2,4];
+
+  const hasScatter=scatterReels.map(c =>
+    grid[c].some(cell => cell.id==="SCAT")
+  );
+
+  const freeTrigger=hasScatter.every(Boolean);
+  const freeAward=freeTrigger ? 10 : 0;
+
   let scatters=0;
-  for(let c=0;c<5;c++) for(let r=0;r<3;r++) if(grid[c][r].id==="SCAT") scatters++;
-  let freeAward=0;
-  if(scatters>=3){
-    freeAward=7;
-    // Small scatter payment in addition to free spins.
-    total += bet*(scatters===3?2:scatters===4?5:10);
-  }
-  return {total,wins,scatters,freeAward};
+
+  for(const c of scatterReels){
+    for(let r=0;r<3;r++){
+      if(grid[c][r].id==="SCAT"){
+        scatters++;
+
+        if(freeTrigger){
+          wins.add(c+"-"+r);
+        }
+      }
+    }
+
+  return {
+    total,
+    wins,
+    scatters,
+    freeAward,
+    freeTrigger
+  };
 }
 
 function renderGrid(grid,wins=new Set()){
@@ -193,30 +220,45 @@ function updateUI(){
 
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
-async function spin(oneOfAuto=false){
-  if(spinning) return;
-  const bet=BETS[state.betIndex];
-  const isFree=state.freeSpins>0;
-  if(!isFree && state.balance<bet){
-    message.textContent="Nicht genug Coins. Tippe auf COINS +.";
-    return;
-  }
-  spinning=true;
-  $("spinBtn").disabled=true;
+async function animateReels(targetGrid){
+  let shown = makeGrid();
 
-  if(isFree) state.freeSpins--;
-  else {
-    state.balance-=bet;
-    state.stats.wagered+=bet;
-  }
-  state.stats.spins++;
-  state.jackpot += Math.round(bet*0.002);
+  // Alle Walzen laufen zunächst.
+  for(let reel=0; reel<5; reel++){
 
-  for(let i=0;i<5;i++){
-    renderGrid(makeGrid());
-    await sleep(45);
+    // Spätere Walzen laufen etwas länger.
+    const ticks = 7 + reel*2;
+
+    for(let t=0; t<ticks; t++){
+
+      // Bereits gestoppte Walzen bleiben auf dem Endergebnis.
+      for(let c=0; c<reel; c++){
+        shown[c] = targetGrid[c].map(cell => ({...cell}));
+      }
+
+      // Noch laufende Walzen bekommen wechselnde Symbole.
+      for(let c=reel; c<5; c++){
+        for(let r=0; r<3; r++){
+          const base = weightedPick(allowedSymbolsForReel(c));
+          shown[c][r] = {...base, bonus:0};
+        }
+      }
+
+      renderGrid(shown);
+
+      // Vor dem Stopp etwas langsamer werden.
+      await sleep(45 + t*5);
+    }
+
+    // Diese Walze stoppt jetzt endgültig.
+    shown[reel] = targetGrid[reel].map(cell => ({...cell}));
+    renderGrid(shown);
+
+    await sleep(110);
   }
 
+  renderGrid(targetGrid);
+}
   const grid=makeGrid();
   const result=scoreGrid(grid,bet);
   state.balance+=result.total;
