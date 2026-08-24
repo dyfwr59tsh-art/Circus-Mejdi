@@ -10,13 +10,13 @@ const SYMBOLS = [
   {id:"ELE",  image:"circus_elephant_v2.png", weight:7,  pay:{3:25,4:80,5:250}},
   {id:"BEA",  image:"circus_bear_v2.png",     weight:9,  pay:{3:15,4:60,5:175}},
   {id:"PAN",  image:"circus_seal_v2.png",     weight:11, pay:{3:12,4:50,5:125}},
-  {id:"HAT",  image:"circus_wild_v2.png",     weight:13, pay:{3:10,4:40,5:100}},
+  {id:"HAT", image:"hat.png", weight:13, pay:{3:10,4:40,5:100}},
   {id:"A",    image:"circus_A_v2.png",        weight:17, pay:{3:7,4:25,5:60}},
   {id:"K",    image:"circus_K_v2.png",        weight:18, pay:{3:7,4:25,5:60}},
   {id:"Q",    image:"circus_Q_v2.png",        weight:20, pay:{3:5,4:15,5:40}},
   {id:"J",    image:"circus_J_v2.png",        weight:22, pay:{3:5,4:15,5:40}},
   {id:"WILD", image:"circus_wild_v2.png",     weight:3,  pay:{3:40,4:200,5:0}},
-  {id:"SCAT", image:"circus_scatter_v2.png",  weight:0,  pay:{}}
+  {id:"SCAT", {id:"SCAT", image:"scatter.png", weight:0, pay:{}}
 ];
 // 25 fixed paylines, row indices 0..2.
 const LINES = [
