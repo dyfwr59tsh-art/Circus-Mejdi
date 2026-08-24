@@ -158,11 +158,17 @@ function renderGrid(grid,wins=new Set()){
       const cell=grid[c][r];
       const div=document.createElement("div");
       div.className="cell"+(wins.has(c+"-"+r)?" win":"");
+const cell=grid[c][r];
+const div=document.createElement("div");
+div.className="cell"+(wins.has(c+"-"+r)?" win":"");
+
 const icon=document.createElement("img");
 icon.src=cell.image;
 icon.alt=cell.id;
 icon.className="symbol-img";
 div.appendChild(icon);
+
+if(cell.bonus){
       if(cell.bonus){
         const b=document.createElement("span");
         b.className="bonus";
