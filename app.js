@@ -56,7 +56,21 @@ function allowedSymbolsForReel(reel){
 
   return arr;
 }
-
+function freshState(){
+  return {
+    balance: DEFAULT_BALANCE,
+    betIndex: 0,
+    jackpot: DEFAULT_JACKPOT,
+    freeSpins: 0,
+    stats: {
+      spins: 0,
+      wagered: 0,
+      paid: 0,
+      biggestWin: 0,
+      freeSpinsWon: 0
+    }
+  };
+}
 function loadState(){
   try{
     const raw = localStorage.getItem("circusChanceStateV1");
@@ -78,12 +92,6 @@ function short(n){
   if(n>=1e9) return (n/1e9).toFixed(n%1e9?1:0).replace(".",",")+"B";
   if(n>=1e6) return (n/1e6).toFixed(n%1e6?1:0).replace(".",",")+"M";
   return fmt(n);
-}
-
-function allowedSymbolsForReel(reel){
-  const arr = SYMBOLS.filter(s => s.id !== "SCAT");
-  if(reel===0 || reel===2 || reel===4) arr.push({id:"SCAT",icon:"🤡",weight:4,pay:{}});
-  return arr;
 }
 
 function weightedPick(arr){
