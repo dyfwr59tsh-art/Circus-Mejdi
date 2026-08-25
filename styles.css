@@ -1,101 +1,886 @@
-
 :root{
-  --bg:#150b18;--panel:#2b1226;--panel2:#3d1734;--gold:#ffd267;--red:#8f1d2e;
-  --green:#1aa53a;--blue:#1286b8;--text:#fff8e8;--muted:#d7c5d2;
-}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% 0,#5a244c 0,#190d1b 52%,#0e0810 100%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-body{min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-button,input{font:inherit}
-button{touch-action:manipulation}
-.app{width:min(100%,980px);margin:auto;padding:14px}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-.brand{font-weight:1000;font-size:clamp(22px,5vw,40px);letter-spacing:.5px}
-.tagline,.muted{color:var(--muted);font-size:13px}
-.machine{border:3px solid var(--gold);border-radius:26px;padding:14px;background:linear-gradient(#7c2134,#48162d 26%,#2b1328 100%);box-shadow:0 14px 50px #0009,inset 0 0 35px #ffca4a22}
-.jackpot{display:flex;justify-content:center;align-items:center;gap:12px;background:#871d2b;border:2px solid var(--gold);border-radius:16px;padding:8px 12px;margin-bottom:10px;font-weight:900}
-.jackpot strong{color:var(--gold);font-size:clamp(19px,4vw,30px)}
-.reels{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(3,1fr);gap:7px;background:#100910;border-radius:16px;padding:9px;min-height:330px}
-.cell{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;border-radius:14px;background:linear-gradient(#4d2a52,#2b1736);border:1px solid #ffffff22;font-size:clamp(33px,8vw,64px);overflow:hidden;transition:transform .18s,box-shadow .18s}
-.cell.win{box-shadow:0 0 0 3px var(--gold),0 0 25px #ffd267aa;transform:scale(1.025)}
-.cell .bonus{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);background:#9e2933;border:1px solid var(--gold);border-radius:999px;padding:2px 7px;font-size:10px;font-weight:900;white-space:nowrap}
-.payline-note{text-align:center;margin:-1px auto 6px;width:max-content;padding:3px 18px;background:#a72c32;border-radius:0 0 12px 12px;font-weight:900;font-size:12px}
-.meters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
-.meter{background:#26313a;border:1px solid #ffffff33;border-radius:10px;padding:8px 10px;min-width:0}
-.meter span{display:block;color:#f6c46d;font-size:11px;font-weight:800}
-.meter strong{display:block;font-size:clamp(15px,3vw,24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.controls{display:grid;grid-template-columns:80px 80px 1fr;gap:8px;margin-top:10px}
-.control,.small,.dialog-card button{border:0;border-radius:11px;padding:12px 14px;font-weight:900;color:white;background:var(--blue);box-shadow:0 4px 0 #0005;cursor:pointer}
-.control:active,.small:active,.dialog-card button:active{transform:translateY(2px);box-shadow:0 2px 0 #0005}
-.control.secondary{background:#39596a}
-.control.spin{background:linear-gradient(#29c84b,#148c2c);font-size:24px}
-.quick-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
-.small{padding:9px 12px;font-size:13px}
-.message{min-height:28px;text-align:center;padding:9px 4px 0;color:var(--gold);font-weight:900}
-.freespins{text-align:center;background:#0f7244;border-radius:999px;padding:7px 12px;margin:7px auto 0;width:max-content;max-width:100%}
-.hidden{display:none}
-.footnote{font-size:12px;color:#d7c5d2;padding:12px 4px;line-height:1.45}
-dialog{border:0;border-radius:18px;padding:0;background:transparent;color:var(--text);max-width:min(92vw,620px)}
-dialog::backdrop{background:#000b;backdrop-filter:blur(4px)}
-.dialog-card{background:#251225;border:1px solid #ffffff22;border-radius:18px;padding:18px;min-width:min(88vw,420px)}
-.dialog-card.wide{min-width:min(92vw,620px)}
-.dialog-card h2{margin-top:0}
-.dialog-card label{display:grid;gap:6px;margin:12px 0}
-.dialog-card input{width:100%;border-radius:10px;border:1px solid #ffffff33;padding:12px;background:#110a13;color:white}
-.dialog-card button{margin:5px 3px;background:#2b78a2}
-.dialog-card .close{background:#56505a;width:100%;margin-top:12px}
-.dialog-card .danger{background:#a52d3e;width:100%}
-.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{text-align:left;padding:7px;border-bottom:1px solid #ffffff1a}
-th{color:var(--gold)}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.statbox{background:#ffffff0b;border-radius:10px;padding:10px}
-.statbox span{display:block;color:var(--muted);font-size:12px}
-.statbox strong{font-size:18px}
-@media(max-width:650px){
-  .app{padding:8px}
-  .topbar{align-items:flex-start}
-  .reels{min-height:280px;gap:5px;padding:6px}
-  .cell{border-radius:10px}
-  .meters{grid-template-columns:1fr}
-  .controls{grid-template-columns:64px 64px 1fr}
-}
-.symbol-img {
-  width: 95%;
-  height: 95%;
-  object-fit: contain;
-  display: block;
-  margin: auto;
-}
-.symbol-img {
-  width: 82%;
-  height: 82%;
-  max-width: 110px;
-  max-height: 110px;
-  object-fit: contain;
-  display: block;
-  margin: auto;
-}
-/* Gewinnsymbole deutlich hervorheben */
-.cell.win {
-  overflow: visible;
-  z-index: 20;
+  --bg:#150b18;
+  --panel:#2b1226;
+  --panel2:#3d1734;
+  --gold:#ffd267;
+  --red:#8f1d2e;
+  --green:#1aa53a;
+  --blue:#1286b8;
+  --text:#fff8e8;
+  --muted:#d7c5d2;
 }
 
-.cell.win .symbol-img {
-  position: relative;
-  z-index: 25;
-  animation: winPop 0.55s ease-in-out infinite;
-  filter: drop-shadow(0 0 10px rgba(255, 215, 80, 0.9));
+*{
+  box-sizing:border-box;
 }
 
-@keyframes winPop {
-  0%, 100% {
-    transform: scale(1);
+html,
+body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  color:var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+
+  background:
+    linear-gradient(
+      rgba(5,2,8,.18),
+      rgba(5,2,8,.42)
+    ),
+    url("circus-bg.jpg");
+
+  background-size:cover;
+  background-position:center center;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+}
+
+body{
+  min-height:100vh;
+  padding:
+    env(safe-area-inset-top)
+    env(safe-area-inset-right)
+    env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+
+  overflow-x:hidden;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  touch-action:manipulation;
+}
+
+/* =========================
+   HAUPTAPP
+========================= */
+
+.app{
+  width:min(96vw,1280px);
+  margin:0 auto;
+  padding:10px 12px 14px;
+}
+
+/* =========================
+   OBERER BEREICH
+========================= */
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:8px;
+}
+
+.brand{
+  font-weight:1000;
+  font-size:clamp(22px,3vw,38px);
+  letter-spacing:.5px;
+  text-shadow:
+    0 2px 4px #000,
+    0 0 12px #000;
+}
+
+.tagline,
+.muted{
+  color:var(--muted);
+  font-size:13px;
+  text-shadow:0 1px 3px #000;
+}
+
+/* =========================
+   SPIELAUTOMAT
+========================= */
+
+.machine{
+  border:3px solid var(--gold);
+  border-radius:24px;
+
+  padding:10px;
+
+  background:
+    linear-gradient(
+      rgba(124,33,52,.94),
+      rgba(72,22,45,.94) 26%,
+      rgba(43,19,40,.96) 100%
+    );
+
+  box-shadow:
+    0 14px 50px #000b,
+    inset 0 0 35px #ffca4a22;
+}
+
+/* =========================
+   JACKPOT
+========================= */
+
+.jackpot{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+
+  background:#871d2beF;
+  border:2px solid var(--gold);
+  border-radius:16px;
+
+  padding:7px 12px;
+  margin-bottom:8px;
+
+  font-weight:900;
+
+  box-shadow:
+    inset 0 0 15px #0004,
+    0 0 10px #0006;
+}
+
+.jackpot strong{
+  color:var(--gold);
+  font-size:clamp(20px,2.6vw,32px);
+}
+
+/* =========================
+   WALZEN
+========================= */
+
+.reels{
+  display:grid;
+
+  grid-template-columns:
+    repeat(5,1fr);
+
+  grid-template-rows:
+    repeat(3,1fr);
+
+  gap:6px;
+
+  background:#100910eF;
+
+  border-radius:16px;
+
+  padding:8px;
+
+  height:min(52vh,500px);
+  min-height:310px;
+
+  box-shadow:
+    inset 0 0 28px #000;
+}
+
+/* =========================
+   EINZELNES SYMBOLFELD
+========================= */
+
+.cell{
+  position:relative;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  min-width:0;
+  min-height:0;
+
+  border-radius:12px;
+
+  background:
+    linear-gradient(
+      #4d2a52eF,
+      #2b1736f5
+    );
+
+  border:
+    1px solid #ffffff22;
+
+  overflow:hidden;
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease;
+}
+
+/* =========================
+   SYMBOLBILDER
+========================= */
+
+.symbol-img{
+  width:86%;
+  height:86%;
+
+  object-fit:contain;
+
+  display:block;
+  margin:auto;
+
+  max-width:none;
+  max-height:none;
+
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+/* =========================
+   GEWINNSYMBOL
+========================= */
+
+.cell.win{
+  overflow:visible;
+  z-index:20;
+
+  box-shadow:
+    0 0 0 3px var(--gold),
+    0 0 25px #ffd267cc;
+}
+
+.cell.win .symbol-img{
+  position:relative;
+  z-index:25;
+
+  animation:
+    winPop .55s
+    ease-in-out
+    infinite;
+
+  filter:
+    drop-shadow(
+      0 0 10px
+      rgba(255,215,80,.95)
+    );
+}
+
+@keyframes winPop{
+
+  0%,
+  100%{
+    transform:scale(1);
   }
 
-  50% {
-    transform: scale(1.28);
+  50%{
+    transform:scale(1.28);
+  }
+}
+
+/* =========================
+   BONUS-WERT AUF SYMBOL
+========================= */
+
+.cell .bonus{
+  position:absolute;
+
+  bottom:3px;
+  left:50%;
+
+  transform:
+    translateX(-50%);
+
+  background:#9e2933;
+
+  border:
+    1px solid var(--gold);
+
+  border-radius:999px;
+
+  padding:2px 7px;
+
+  font-size:10px;
+  font-weight:900;
+
+  white-space:nowrap;
+
+  z-index:30;
+}
+
+/* =========================
+   25 LINIEN
+========================= */
+
+.payline-note{
+  text-align:center;
+
+  margin:-1px auto 5px;
+
+  width:max-content;
+
+  padding:
+    3px 20px;
+
+  background:#a72c32;
+
+  border-radius:
+    0 0 12px 12px;
+
+  font-weight:900;
+  font-size:12px;
+}
+
+/* =========================
+   GUTHABEN / EINSATZ / GEWINN
+========================= */
+
+.meters{
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:7px;
+
+  margin-top:7px;
+}
+
+.meter{
+  background:#26313aeF;
+
+  border:
+    1px solid #ffffff33;
+
+  border-radius:10px;
+
+  padding:7px 10px;
+
+  min-width:0;
+
+  box-shadow:
+    0 3px 10px #0005;
+}
+
+.meter span{
+  display:block;
+
+  color:#f6c46d;
+
+  font-size:11px;
+  font-weight:800;
+}
+
+.meter strong{
+  display:block;
+
+  font-size:
+    clamp(15px,2vw,23px);
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* =========================
+   START / PLUS / MINUS
+========================= */
+
+.controls{
+  display:grid;
+
+  grid-template-columns:
+    72px 72px 1fr;
+
+  gap:7px;
+
+  margin-top:8px;
+}
+
+.control,
+.small,
+.dialog-card button{
+  border:0;
+
+  border-radius:11px;
+
+  padding:
+    10px 13px;
+
+  font-weight:900;
+
+  color:white;
+
+  background:var(--blue);
+
+  box-shadow:
+    0 4px 0 #0005;
+
+  cursor:pointer;
+}
+
+.control:active,
+.small:active,
+.dialog-card button:active{
+  transform:
+    translateY(2px);
+
+  box-shadow:
+    0 2px 0 #0005;
+}
+
+.control.secondary{
+  background:#39596a;
+}
+
+.control.spin{
+  background:
+    linear-gradient(
+      #29c84b,
+      #148c2c
+    );
+
+  font-size:
+    clamp(22px,3vw,30px);
+}
+
+/* =========================
+   AUTO / COINS / REGELN
+========================= */
+
+.quick-row{
+  display:flex;
+
+  gap:7px;
+
+  flex-wrap:wrap;
+
+  margin-top:7px;
+}
+
+.small{
+  padding:
+    8px 12px;
+
+  font-size:13px;
+}
+
+/* =========================
+   MELDUNG
+========================= */
+
+.message{
+  min-height:25px;
+
+  text-align:center;
+
+  padding:
+    6px 4px 0;
+
+  color:var(--gold);
+
+  font-weight:900;
+
+  text-shadow:
+    0 2px 3px #000;
+}
+
+/* =========================
+   FREISPIELE
+========================= */
+
+.freespins{
+  text-align:center;
+
+  background:#0f7244;
+
+  border-radius:999px;
+
+  padding:
+    7px 12px;
+
+  margin:
+    7px auto 0;
+
+  width:max-content;
+
+  max-width:100%;
+
+  box-shadow:
+    0 0 12px #0007;
+}
+
+.hidden{
+  display:none;
+}
+
+/* =========================
+   HINWEIS UNTEN
+========================= */
+
+.footnote{
+  font-size:12px;
+
+  color:#eee;
+
+  padding:
+    8px 4px;
+
+  line-height:1.35;
+
+  text-align:center;
+
+  text-shadow:
+    0 2px 4px #000;
+}
+
+/* =========================
+   DIALOGE
+========================= */
+
+dialog{
+  border:0;
+
+  border-radius:18px;
+
+  padding:0;
+
+  background:transparent;
+
+  color:var(--text);
+
+  max-width:
+    min(92vw,700px);
+}
+
+dialog::backdrop{
+  background:#000b;
+  backdrop-filter:blur(4px);
+}
+
+.dialog-card{
+  background:#251225f7;
+
+  border:
+    1px solid #ffffff22;
+
+  border-radius:18px;
+
+  padding:18px;
+
+  min-width:
+    min(88vw,420px);
+}
+
+.dialog-card.wide{
+  min-width:
+    min(92vw,680px);
+}
+
+.dialog-card h2{
+  margin-top:0;
+}
+
+.dialog-card label{
+  display:grid;
+  gap:6px;
+  margin:12px 0;
+}
+
+.dialog-card input{
+  width:100%;
+
+  border-radius:10px;
+
+  border:
+    1px solid #ffffff33;
+
+  padding:12px;
+
+  background:#110a13;
+
+  color:white;
+}
+
+.dialog-card button{
+  margin:5px 3px;
+
+  background:#2b78a2;
+}
+
+.dialog-card .close{
+  background:#56505a;
+
+  width:100%;
+
+  margin-top:12px;
+}
+
+.dialog-card .danger{
+  background:#a52d3e;
+
+  width:100%;
+}
+
+/* =========================
+   COINS
+========================= */
+
+.preset-grid{
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:8px;
+}
+
+/* =========================
+   TABELLEN
+========================= */
+
+table{
+  width:100%;
+
+  border-collapse:collapse;
+
+  font-size:14px;
+}
+
+th,
+td{
+  text-align:left;
+
+  padding:7px;
+
+  border-bottom:
+    1px solid #ffffff1a;
+}
+
+th{
+  color:var(--gold);
+}
+
+/* =========================
+   STATISTIK
+========================= */
+
+.stat-grid{
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:8px;
+}
+
+.statbox{
+  background:#ffffff0b;
+
+  border-radius:10px;
+
+  padding:10px;
+}
+
+.statbox span{
+  display:block;
+
+  color:var(--muted);
+
+  font-size:12px;
+}
+
+.statbox strong{
+  font-size:18px;
+}
+
+/* =========================
+   QUERFORMAT
+========================= */
+
+@media (orientation:landscape){
+
+  body{
+    min-height:100vh;
+  }
+
+  .app{
+    width:min(96vw,1280px);
+
+    padding:
+      6px 10px 10px;
+  }
+
+  .topbar{
+    margin-bottom:6px;
+  }
+
+  .brand{
+    font-size:
+      clamp(20px,2.5vw,34px);
+  }
+
+  .tagline{
+    font-size:12px;
+  }
+
+  .machine{
+    padding:8px;
+
+    border-radius:20px;
+  }
+
+  .jackpot{
+    padding:
+      5px 10px;
+
+    margin-bottom:6px;
+  }
+
+  .reels{
+    height:
+      min(54vh,500px);
+
+    min-height:270px;
+
+    gap:5px;
+
+    padding:6px;
+  }
+
+  .cell{
+    border-radius:10px;
+  }
+
+  .symbol-img{
+    width:88%;
+    height:88%;
+  }
+
+  .meters{
+    margin-top:6px;
+  }
+
+  .meter{
+    padding:
+      5px 8px;
+  }
+
+  .controls{
+    margin-top:6px;
+
+    grid-template-columns:
+      68px 68px 1fr;
+  }
+
+  .control{
+    padding:
+      8px 10px;
+  }
+
+  .quick-row{
+    margin-top:6px;
+  }
+
+  .small{
+    padding:
+      7px 10px;
+  }
+
+  .message{
+    padding-top:4px;
+  }
+
+  .footnote{
+    padding-top:6px;
+  }
+}
+
+/* =========================
+   HOCHKANT
+   Nur als Übergang
+========================= */
+
+@media (orientation:portrait){
+
+  .app{
+    width:min(100%,760px);
+
+    padding:8px;
+  }
+
+  .reels{
+    height:auto;
+    min-height:300px;
+  }
+
+  .meters{
+    grid-template-columns:1fr;
+  }
+
+  .controls{
+    grid-template-columns:
+      64px 64px 1fr;
+  }
+}
+
+/* =========================
+   SEHR KLEINE QUERFORMAT-
+   BILDSCHIRME
+========================= */
+
+@media (
+  orientation:landscape
+)
+and (
+  max-height:500px
+){
+
+  .app{
+    padding-top:3px;
+  }
+
+  .tagline{
+    display:none;
+  }
+
+  .topbar{
+    margin-bottom:3px;
+  }
+
+  .machine{
+    padding:6px;
+  }
+
+  .jackpot{
+    padding:3px 8px;
+    margin-bottom:4px;
+  }
+
+  .reels{
+    height:47vh;
+    min-height:200px;
+  }
+
+  .meters{
+    gap:5px;
+    margin-top:4px;
+  }
+
+  .meter{
+    padding:4px 7px;
+  }
+
+  .controls{
+    gap:5px;
+    margin-top:4px;
+  }
+
+  .quick-row{
+    margin-top:4px;
+  }
+
+  .message{
+    min-height:18px;
+    padding-top:3px;
+  }
+
+  .footnote{
+    font-size:10px;
+    padding:4px;
   }
 }
