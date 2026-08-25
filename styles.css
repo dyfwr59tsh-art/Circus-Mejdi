@@ -20,19 +20,12 @@ body{
   width:100%;
   min-height:100%;
   color:var(--text);
-
-  font-family:
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    Arial,
-    sans-serif;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
 
   background:
     linear-gradient(
-      rgba(5,2,8,.18),
-      rgba(5,2,8,.34)
+      rgba(5,2,8,.12),
+      rgba(5,2,8,.28)
     ),
     url("./circus-bg.jpg");
 
@@ -44,7 +37,6 @@ body{
 
 body{
   min-height:100vh;
-
   padding:
     env(safe-area-inset-top)
     env(safe-area-inset-right)
@@ -68,9 +60,9 @@ button{
 ========================= */
 
 .app{
-  width:min(84vw,1100px);
+  width:min(82vw,1040px);
   margin:0 auto;
-  padding:8px 10px 12px;
+  padding:8px 10px 10px;
 }
 
 /* =========================
@@ -81,24 +73,23 @@ button{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:12px;
-  margin-bottom:6px;
+  gap:10px;
+  margin-bottom:5px;
 }
 
 .brand{
   font-weight:1000;
-  font-size:clamp(22px,2.7vw,36px);
-  letter-spacing:.5px;
-
+  font-size:clamp(20px,2.4vw,34px);
+  letter-spacing:.4px;
   text-shadow:
     0 2px 4px #000,
-    0 0 12px #000;
+    0 0 10px #000;
 }
 
 .tagline,
 .muted{
   color:var(--muted);
-  font-size:12px;
+  font-size:11px;
   text-shadow:0 1px 3px #000;
 }
 
@@ -108,20 +99,19 @@ button{
 
 .machine{
   border:3px solid var(--gold);
-  border-radius:22px;
-
-  padding:8px;
+  border-radius:20px;
+  padding:7px;
 
   background:
     linear-gradient(
-      rgba(124,33,52,.92),
-      rgba(72,22,45,.93) 26%,
-      rgba(43,19,40,.95) 100%
+      rgba(124,33,52,.90),
+      rgba(72,22,45,.92) 26%,
+      rgba(43,19,40,.94) 100%
     );
 
   box-shadow:
-    0 14px 50px #000b,
-    inset 0 0 35px #ffca4a22;
+    0 12px 42px #000b,
+    inset 0 0 30px #ffca4a22;
 }
 
 /* =========================
@@ -132,25 +122,21 @@ button{
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:14px;
+  gap:12px;
 
-  background:#871d2bef;
+  background:#871d2beF;
   border:2px solid var(--gold);
-  border-radius:15px;
+  border-radius:14px;
 
-  padding:6px 10px;
-  margin-bottom:6px;
+  padding:5px 10px;
+  margin-bottom:5px;
 
   font-weight:900;
-
-  box-shadow:
-    inset 0 0 15px #0004,
-    0 0 10px #0006;
 }
 
 .jackpot strong{
   color:var(--gold);
-  font-size:clamp(20px,2.5vw,31px);
+  font-size:clamp(20px,2.2vw,29px);
 }
 
 /* =========================
@@ -159,30 +145,28 @@ button{
 
 .reels{
   display:grid;
-
   grid-template-columns:repeat(5,1fr);
   grid-template-rows:repeat(3,1fr);
 
   gap:5px;
 
   background:#100910ef;
-  border-radius:15px;
+  border-radius:14px;
   padding:6px;
 
-  height:min(51vh,470px);
-  min-height:250px;
+  height:min(46vh,410px);
+  min-height:220px;
 
   box-shadow:
-    inset 0 0 28px #000;
+    inset 0 0 24px #000;
 }
 
 /* =========================
-   EINZELNES FELD
+   FELDER
 ========================= */
 
 .cell{
   position:relative;
-
   display:flex;
   align-items:center;
   justify-content:center;
@@ -199,7 +183,6 @@ button{
     );
 
   border:1px solid #ffffff22;
-
   overflow:hidden;
 
   transition:
@@ -212,8 +195,8 @@ button{
 ========================= */
 
 .symbol-img{
-  width:86%;
-  height:86%;
+  width:82%;
+  height:82%;
 
   object-fit:contain;
 
@@ -237,7 +220,7 @@ button{
 
   box-shadow:
     0 0 0 3px var(--gold),
-    0 0 25px #ffd267cc;
+    0 0 22px #ffd267cc;
 }
 
 .cell.win .symbol-img{
@@ -251,47 +234,42 @@ button{
 
   filter:
     drop-shadow(
-      0 0 10px
+      0 0 9px
       rgba(255,215,80,.95)
     );
 }
 
 @keyframes winPop{
-  0%,
-  100%{
+  0%,100%{
     transform:scale(1);
   }
 
   50%{
-    transform:scale(1.28);
+    transform:scale(1.24);
   }
 }
 
 /* =========================
-   BONUS-WERT
+   BONUS
 ========================= */
 
 .cell .bonus{
   position:absolute;
-
   bottom:3px;
   left:50%;
 
   transform:translateX(-50%);
 
   background:#9e2933;
-
   border:1px solid var(--gold);
-
   border-radius:999px;
 
   padding:2px 7px;
 
-  font-size:10px;
+  font-size:9px;
   font-weight:900;
 
   white-space:nowrap;
-
   z-index:30;
 }
 
@@ -302,18 +280,18 @@ button{
 .payline-note{
   text-align:center;
 
-  margin:-1px auto 5px;
+  margin:-1px auto 4px;
 
   width:max-content;
 
-  padding:3px 20px;
+  padding:3px 18px;
 
   background:#a72c32;
 
-  border-radius:0 0 12px 12px;
+  border-radius:0 0 11px 11px;
 
   font-weight:900;
-  font-size:12px;
+  font-size:11px;
 }
 
 /* =========================
@@ -322,41 +300,33 @@ button{
 
 .meters{
   display:grid;
-
   grid-template-columns:repeat(3,1fr);
 
-  gap:6px;
-
-  margin-top:6px;
+  gap:5px;
+  margin-top:5px;
 }
 
 .meter{
   background:#26313aef;
-
   border:1px solid #ffffff33;
+  border-radius:9px;
 
-  border-radius:10px;
-
-  padding:6px 9px;
-
+  padding:5px 8px;
   min-width:0;
-
-  box-shadow:0 3px 10px #0005;
 }
 
 .meter span{
   display:block;
-
   color:#f6c46d;
 
-  font-size:10px;
+  font-size:9px;
   font-weight:800;
 }
 
 .meter strong{
   display:block;
 
-  font-size:clamp(14px,1.9vw,22px);
+  font-size:clamp(13px,1.7vw,20px);
 
   white-space:nowrap;
   overflow:hidden;
@@ -364,34 +334,29 @@ button{
 }
 
 /* =========================
-   START / PLUS / MINUS
+   BUTTONS
 ========================= */
 
 .controls{
   display:grid;
+  grid-template-columns:62px 62px 1fr;
 
-  grid-template-columns:66px 66px 1fr;
-
-  gap:6px;
-
-  margin-top:6px;
+  gap:5px;
+  margin-top:5px;
 }
 
 .control,
 .small,
 .dialog-card button{
   border:0;
+  border-radius:9px;
 
-  border-radius:10px;
-
-  padding:9px 12px;
+  padding:8px 10px;
 
   font-weight:900;
-
   color:white;
 
   background:var(--blue);
-
   box-shadow:0 4px 0 #0005;
 
   cursor:pointer;
@@ -415,26 +380,24 @@ button{
       #148c2c
     );
 
-  font-size:clamp(22px,2.8vw,29px);
+  font-size:clamp(20px,2.5vw,27px);
 }
 
 /* =========================
-   AUTO / COINS / REGELN
+   SCHNELLBUTTONS
 ========================= */
 
 .quick-row{
   display:flex;
-
-  gap:6px;
+  gap:5px;
 
   flex-wrap:wrap;
-
-  margin-top:6px;
+  margin-top:5px;
 }
 
 .small{
-  padding:7px 10px;
-  font-size:12px;
+  padding:6px 9px;
+  font-size:11px;
 }
 
 /* =========================
@@ -442,14 +405,12 @@ button{
 ========================= */
 
 .message{
-  min-height:22px;
-
+  min-height:20px;
   text-align:center;
 
-  padding:5px 4px 0;
+  padding:4px 4px 0;
 
   color:var(--gold);
-
   font-weight:900;
 
   text-shadow:0 2px 3px #000;
@@ -461,19 +422,15 @@ button{
 
 .freespins{
   text-align:center;
-
   background:#0f7244;
 
   border-radius:999px;
+  padding:5px 10px;
 
-  padding:6px 11px;
-
-  margin:6px auto 0;
+  margin:5px auto 0;
 
   width:max-content;
   max-width:100%;
-
-  box-shadow:0 0 12px #0007;
 }
 
 .hidden{
@@ -485,16 +442,13 @@ button{
 ========================= */
 
 .footnote{
-  font-size:11px;
-
+  font-size:10px;
   color:#eee;
 
-  padding:6px 4px;
-
-  line-height:1.35;
+  padding:5px 4px;
+  line-height:1.3;
 
   text-align:center;
-
   text-shadow:0 2px 4px #000;
 }
 
@@ -506,10 +460,11 @@ dialog{
   border:0;
   border-radius:18px;
   padding:0;
+
   background:transparent;
   color:var(--text);
 
-  max-width:min(90vw,700px);
+  max-width:min(88vw,680px);
 }
 
 dialog::backdrop{
@@ -519,18 +474,16 @@ dialog::backdrop{
 
 .dialog-card{
   background:#251225f7;
-
   border:1px solid #ffffff22;
-
   border-radius:18px;
 
   padding:18px;
 
-  min-width:min(82vw,420px);
+  min-width:min(80vw,420px);
 }
 
 .dialog-card.wide{
-  min-width:min(88vw,680px);
+  min-width:min(86vw,660px);
 }
 
 .dialog-card h2{
@@ -545,15 +498,11 @@ dialog::backdrop{
 
 .dialog-card input{
   width:100%;
-
   border-radius:10px;
-
   border:1px solid #ffffff33;
 
   padding:12px;
-
   background:#110a13;
-
   color:white;
 }
 
@@ -596,9 +545,7 @@ table{
 th,
 td{
   text-align:left;
-
   padding:7px;
-
   border-bottom:1px solid #ffffff1a;
 }
 
@@ -612,25 +559,19 @@ th{
 
 .stat-grid{
   display:grid;
-
   grid-template-columns:1fr 1fr;
-
   gap:8px;
 }
 
 .statbox{
   background:#ffffff0b;
-
   border-radius:10px;
-
   padding:10px;
 }
 
 .statbox span{
   display:block;
-
   color:var(--muted);
-
   font-size:12px;
 }
 
@@ -646,83 +587,88 @@ th{
 
   body{
     min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
 
   .app{
-    width:min(84vw,1100px);
+    width:min(82vw,1040px);
     margin:0 auto;
-    padding:5px 8px 8px;
+    padding:4px 8px 6px;
   }
 
   .topbar{
-    margin-bottom:4px;
+    margin-bottom:3px;
   }
 
   .brand{
-    font-size:clamp(20px,2.3vw,32px);
+    font-size:clamp(19px,2.2vw,30px);
   }
 
   .tagline{
-    font-size:11px;
+    display:none;
   }
 
   .machine{
-    padding:7px;
-    border-radius:19px;
+    padding:6px;
+    border-radius:18px;
   }
 
   .jackpot{
-    padding:4px 9px;
-    margin-bottom:5px;
+    padding:4px 8px;
+    margin-bottom:4px;
   }
 
   .reels{
-    height:min(50vh,450px);
-    min-height:220px;
+    height:min(44vh,380px);
+    min-height:190px;
+
     gap:4px;
     padding:5px;
   }
 
   .symbol-img{
-    width:88%;
-    height:88%;
+    width:80%;
+    height:80%;
   }
 
   .meters{
-    margin-top:5px;
-    gap:5px;
+    margin-top:4px;
+    gap:4px;
   }
 
   .meter{
-    padding:5px 7px;
+    padding:4px 6px;
   }
 
   .controls{
-    margin-top:5px;
+    margin-top:4px;
+    gap:4px;
 
     grid-template-columns:
-      64px 64px 1fr;
+      58px 58px 1fr;
   }
 
   .control{
-    padding:8px 9px;
+    padding:7px 8px;
   }
 
   .quick-row{
-    margin-top:5px;
+    margin-top:4px;
   }
 
   .small{
-    padding:6px 9px;
+    padding:5px 8px;
   }
 
   .message{
-    padding-top:3px;
-    min-height:20px;
+    padding-top:2px;
+    min-height:18px;
   }
 
   .footnote{
-    padding-top:4px;
+    padding-top:3px;
   }
 }
 
@@ -731,6 +677,10 @@ th{
 ========================= */
 
 @media (orientation:portrait){
+
+  body{
+    display:block;
+  }
 
   .app{
     width:min(100%,760px);
@@ -747,8 +697,7 @@ th{
   }
 
   .controls{
-    grid-template-columns:
-      64px 64px 1fr;
+    grid-template-columns:64px 64px 1fr;
   }
 }
 
@@ -759,12 +708,8 @@ th{
 @media (orientation:landscape) and (max-height:500px){
 
   .app{
-    width:min(86vw,1000px);
+    width:min(80vw,980px);
     padding-top:2px;
-  }
-
-  .tagline{
-    display:none;
   }
 
   .topbar{
@@ -776,26 +721,26 @@ th{
   }
 
   .jackpot{
-    padding:3px 8px;
+    padding:3px 7px;
     margin-bottom:3px;
   }
 
   .reels{
-    height:45vh;
-    min-height:180px;
+    height:40vh;
+    min-height:170px;
   }
 
   .meters{
-    gap:4px;
+    gap:3px;
     margin-top:3px;
   }
 
   .meter{
-    padding:4px 6px;
+    padding:3px 5px;
   }
 
   .controls{
-    gap:4px;
+    gap:3px;
     margin-top:3px;
   }
 
@@ -804,12 +749,12 @@ th{
   }
 
   .message{
-    min-height:17px;
+    min-height:16px;
     padding-top:2px;
   }
 
   .footnote{
-    font-size:10px;
-    padding:3px;
+    font-size:9px;
+    padding:2px;
   }
 }
