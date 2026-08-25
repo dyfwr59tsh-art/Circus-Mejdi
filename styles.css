@@ -1,13 +1,16 @@
 :root{
-  --bg:#150b18;
-  --panel:#2b1226;
-  --panel2:#3d1734;
-  --gold:#ffd267;
-  --red:#8f1d2e;
-  --green:#1aa53a;
-  --blue:#1286b8;
-  --text:#fff8e8;
-  --muted:#d7c5d2;
+  --bg:#071521;
+  --table:#4d91a8;
+  --table-dark:#286276;
+  --rail:#263846;
+  --rail-light:#657c89;
+  --blue:#078fc2;
+  --blue-dark:#05678e;
+  --gold:#f4c75b;
+  --green:#16a63b;
+  --red:#b52b38;
+  --text:#ffffff;
+  --panel:#172934;
 }
 
 *{
@@ -18,743 +21,1130 @@ html,
 body{
   margin:0;
   width:100%;
+  height:100%;
   min-height:100%;
-  color:var(--text);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-
-  background:
-    linear-gradient(
-      rgba(5,2,8,.12),
-      rgba(5,2,8,.28)
-    ),
-    url("./circus-bg.jpg");
-
-  background-size:cover;
-  background-position:center center;
-  background-repeat:no-repeat;
-  background-attachment:fixed;
+  overflow-x:hidden;
 }
 
 body{
   min-height:100vh;
+  color:var(--text);
+
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  background:
+    radial-gradient(
+      circle at center,
+      #16435b 0%,
+      #0c283b 45%,
+      #06141f 100%
+    );
+
   padding:
     env(safe-area-inset-top)
     env(safe-area-inset-right)
     env(safe-area-inset-bottom)
     env(safe-area-inset-left);
-
-  overflow-x:hidden;
-}
-
-button,
-input{
-  font:inherit;
 }
 
 button{
+  font:inherit;
   touch-action:manipulation;
+  cursor:pointer;
 }
 
-/* =========================
-   HAUPTAPP
-========================= */
+/* ===================================
+   APP
+=================================== */
 
-.app{
-  width:min(82vw,1040px);
-  margin:0 auto;
-  padding:8px 10px 10px;
+.poker-app{
+  width:100%;
+  min-height:100vh;
 }
-
-/* =========================
-   OBERER BEREICH
-========================= */
 
 .topbar{
+  width:min(96vw,1500px);
+  margin:auto;
+
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:10px;
-  margin-bottom:5px;
+
+  padding:8px 12px 4px;
 }
 
-.brand{
+.logo{
+  font-size:clamp(20px,2.6vw,38px);
   font-weight:1000;
-  font-size:clamp(20px,2.4vw,34px);
-  letter-spacing:.4px;
+  letter-spacing:.5px;
+
   text-shadow:
-    0 2px 4px #000,
-    0 0 10px #000;
+    0 3px 5px #000,
+    0 0 12px #000;
 }
 
-.tagline,
-.muted{
-  color:var(--muted);
+.logo small{
+  display:block;
   font-size:11px;
-  text-shadow:0 1px 3px #000;
+  font-weight:500;
+  opacity:.75;
 }
 
-/* =========================
-   SPIELAUTOMAT
-========================= */
+.top-actions{
+  display:flex;
+  gap:7px;
+}
 
-.machine{
-  border:3px solid var(--gold);
-  border-radius:20px;
-  padding:7px;
+.top-button{
+  border:1px solid #ffffff44;
+  border-radius:10px;
+
+  padding:9px 14px;
 
   background:
     linear-gradient(
-      rgba(124,33,52,.90),
-      rgba(72,22,45,.92) 26%,
-      rgba(43,19,40,.94) 100%
+      #16a5d4,
+      #0878a4
+    );
+
+  color:white;
+
+  font-weight:900;
+
+  box-shadow:
+    0 4px 8px #0007;
+}
+
+/* ===================================
+   POKERRAUM
+=================================== */
+
+.poker-room{
+  width:min(98vw,1500px);
+  margin:auto;
+  padding:0 8px 8px;
+}
+
+/* ===================================
+   TISCH AUSSEN
+=================================== */
+
+.table-shell{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.poker-table{
+  position:relative;
+
+  width:min(94vw,1250px);
+
+  aspect-ratio:2.15 / 1;
+
+  padding:18px;
+
+  border-radius:50%;
+
+  background:
+    linear-gradient(
+      145deg,
+      #8295a1,
+      #263945 28%,
+      #152731 60%,
+      #718995
     );
 
   box-shadow:
-    0 12px 42px #000b,
-    inset 0 0 30px #ffca4a22;
+    0 20px 45px #000c,
+    inset 0 0 15px #ffffff55,
+    inset 0 0 0 5px #15232c;
 }
 
-/* =========================
-   JACKPOT
-========================= */
+/* ===================================
+   TISCH INNEN
+=================================== */
 
-.jackpot{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:12px;
+.table-inner{
+  position:relative;
 
-  background:#871d2beF;
-  border:2px solid var(--gold);
-  border-radius:14px;
+  width:100%;
+  height:100%;
 
-  padding:5px 10px;
-  margin-bottom:5px;
+  border-radius:50%;
 
-  font-weight:900;
-}
+  overflow:visible;
 
-.jackpot strong{
-  color:var(--gold);
-  font-size:clamp(20px,2.2vw,29px);
-}
+  background:
+    radial-gradient(
+      ellipse at center,
+      #69a9bd 0%,
+      #4b91a8 55%,
+      #34768d 100%
+    );
 
-/* =========================
-   WALZEN
-========================= */
-
-.reels{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  grid-template-rows:repeat(3,1fr);
-
-  gap:5px;
-
-  background:#100910ef;
-  border-radius:14px;
-  padding:6px;
-
-  height:min(46vh,410px);
-  min-height:220px;
+  border:3px solid #b7d2dc55;
 
   box-shadow:
-    inset 0 0 24px #000;
+    inset 0 0 45px #0a405577,
+    inset 0 0 12px #ffffff44;
 }
 
-/* =========================
-   FELDER
-========================= */
+.table-inner::after{
+  content:"POKER CLUB";
 
-.cell{
-  position:relative;
+  position:absolute;
+  left:50%;
+  top:54%;
+
+  transform:
+    translate(-50%,-50%);
+
+  font-size:clamp(25px,5vw,72px);
+  font-weight:1000;
+
+  color:#ffffff10;
+
+  letter-spacing:3px;
+
+  pointer-events:none;
+}
+
+/* ===================================
+   TITEL AUF DEM TISCH
+=================================== */
+
+.table-title{
+  position:absolute;
+
+  left:50%;
+  top:12%;
+
+  transform:translateX(-50%);
+
+  text-align:center;
+
+  font-size:clamp(11px,1.5vw,20px);
+
+  font-weight:1000;
+
+  color:#ffffff55;
+}
+
+.table-title small{
+  display:block;
+  font-size:.55em;
+  letter-spacing:2px;
+}
+
+/* ===================================
+   SPIELER
+=================================== */
+
+.player{
+  position:absolute;
+
+  z-index:20;
+
   display:flex;
   align-items:center;
-  justify-content:center;
 
-  min-width:0;
-  min-height:0;
+  gap:6px;
+
+  min-width:125px;
+
+  padding:5px 8px;
 
   border-radius:10px;
 
   background:
     linear-gradient(
-      #4d2a52ef,
-      #2b1736f5
+      #1d3c4d,
+      #102834
     );
 
-  border:1px solid #ffffff22;
-  overflow:hidden;
-
-  transition:
-    transform .18s ease,
-    box-shadow .18s ease;
-}
-
-/* =========================
-   SYMBOLE
-========================= */
-
-.symbol-img{
-  width:82%;
-  height:82%;
-
-  object-fit:contain;
-
-  display:block;
-  margin:auto;
-
-  max-width:none;
-  max-height:none;
-
-  user-select:none;
-  -webkit-user-drag:none;
-}
-
-/* =========================
-   GEWINNSYMBOLE
-========================= */
-
-.cell.win{
-  overflow:visible;
-  z-index:20;
+  border:
+    1px solid #ffffff44;
 
   box-shadow:
-    0 0 0 3px var(--gold),
-    0 0 22px #ffd267cc;
+    0 5px 12px #0008;
 }
 
-.cell.win .symbol-img{
-  position:relative;
-  z-index:25;
-
-  animation:
-    winPop .55s
-    ease-in-out
-    infinite;
-
-  filter:
-    drop-shadow(
-      0 0 9px
-      rgba(255,215,80,.95)
-    );
+.player.active{
+  box-shadow:
+    0 0 0 3px #37e75b,
+    0 0 20px #37e75bbb;
 }
 
-@keyframes winPop{
-  0%,100%{
-    transform:scale(1);
-  }
-
-  50%{
-    transform:scale(1.24);
-  }
+.player.folded{
+  opacity:.38;
+  filter:grayscale(.8);
 }
 
-/* =========================
-   BONUS
-========================= */
+/* ===================================
+   POSITIONEN DER BOTS
+=================================== */
 
-.cell .bonus{
-  position:absolute;
-  bottom:3px;
+.player-top-left{
+  left:18%;
+  top:-5%;
+
+  transform:
+    translateX(-50%);
+}
+
+.player-top{
   left:50%;
+  top:-8%;
 
-  transform:translateX(-50%);
+  transform:
+    translateX(-50%);
+}
 
-  background:#9e2933;
-  border:1px solid var(--gold);
-  border-radius:999px;
+.player-top-right{
+  right:18%;
+  top:-5%;
 
-  padding:2px 7px;
+  transform:
+    translateX(50%);
+}
 
-  font-size:9px;
-  font-weight:900;
+/* ===================================
+   AVATAR
+=================================== */
+
+.avatar{
+  width:46px;
+  height:46px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  flex-shrink:0;
+
+  font-size:28px;
+
+  background:
+    radial-gradient(
+      circle,
+      #41677a,
+      #152c38
+    );
+
+  border:
+    2px solid #ffffff55;
+}
+
+.player-info{
+  display:flex;
+  flex-direction:column;
+
+  min-width:60px;
+}
+
+.player-name{
+  font-size:13px;
+}
+
+.player-coins{
+  font-size:11px;
+
+  color:#e8f7ff;
 
   white-space:nowrap;
-  z-index:30;
 }
 
-/* =========================
-   25 LINIEN
-========================= */
+/* ===================================
+   BOT KARTEN
+=================================== */
 
-.payline-note{
-  text-align:center;
-
-  margin:-1px auto 4px;
-
-  width:max-content;
-
-  padding:3px 18px;
-
-  background:#a72c32;
-
-  border-radius:0 0 11px 11px;
-
-  font-weight:900;
-  font-size:11px;
+.cards{
+  display:flex;
+  gap:3px;
 }
 
-/* =========================
-   GUTHABEN / EINSATZ / GEWINN
-========================= */
+.mini-cards{
+  position:absolute;
 
-.meters{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
+  left:50%;
+  top:100%;
+
+  transform:
+    translate(-50%,4px);
+}
+
+.mini-cards .card{
+  width:27px;
+  height:38px;
+
+  font-size:14px;
+}
+
+/* ===================================
+   KARTEN
+=================================== */
+
+.card{
+  position:relative;
+
+  width:clamp(42px,5vw,68px);
+  height:clamp(58px,7vw,94px);
+
+  border-radius:7px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #e9edf0
+    );
+
+  color:#111;
+
+  font-weight:1000;
+
+  font-size:
+    clamp(20px,3vw,38px);
+
+  border:
+    1px solid #c5c5c5;
+
+  box-shadow:
+    0 4px 8px #0006;
+}
+
+.card.red{
+  color:#c92832;
+}
+
+.card-back{
+  color:#cfefff;
+
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #0b5b86,
+      #0b5b86 5px,
+      #063d61 5px,
+      #063d61 10px
+    );
+
+  border:
+    2px solid #dceaf0;
+}
+
+.empty-card{
+  background:#ffffff12;
+
+  border:
+    2px dashed #ffffff33;
+
+  box-shadow:none;
+}
+
+/* ===================================
+   COMMUNITY CARDS
+=================================== */
+
+.community-cards{
+  position:absolute;
+
+  left:50%;
+  top:43%;
+
+  transform:
+    translate(-50%,-50%);
+
+  z-index:10;
+
+  display:flex;
 
   gap:5px;
-  margin-top:5px;
 }
 
-.meter{
-  background:#26313aef;
-  border:1px solid #ffffff33;
-  border-radius:9px;
+/* ===================================
+   POT
+=================================== */
 
-  padding:5px 8px;
-  min-width:0;
+.pot-area{
+  position:absolute;
+
+  left:50%;
+  top:67%;
+
+  transform:
+    translateX(-50%);
+
+  z-index:12;
+
+  display:flex;
+  align-items:center;
+
+  gap:7px;
+
+  padding:
+    4px 12px;
+
+  border-radius:999px;
+
+  background:#193847dd;
+
+  border:
+    1px solid #ffffff44;
+
+  box-shadow:
+    0 3px 8px #0007;
 }
 
-.meter span{
-  display:block;
-  color:#f6c46d;
+.pot-area span{
+  font-size:10px;
 
-  font-size:9px;
-  font-weight:800;
+  color:#c8dbe4;
+
+  font-weight:900;
 }
 
-.meter strong{
-  display:block;
+.pot-area strong{
+  color:var(--gold);
 
-  font-size:clamp(13px,1.7vw,20px);
+  font-size:
+    clamp(14px,2vw,22px);
+}
+
+/* ===================================
+   DEALER BUTTON
+=================================== */
+
+.dealer-button{
+  position:absolute;
+
+  left:63%;
+  bottom:18%;
+
+  z-index:15;
+
+  width:26px;
+  height:26px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:
+    linear-gradient(
+      #fff4bc,
+      #d7ad42
+    );
+
+  color:#333;
+
+  border:
+    2px solid #fff;
+
+  font-size:12px;
+  font-weight:1000;
+
+  box-shadow:
+    0 3px 7px #0008;
+}
+
+/* ===================================
+   EIGENER SPIELER
+=================================== */
+
+.hero-player{
+  left:50%;
+  bottom:-9%;
+
+  transform:
+    translateX(-50%);
+
+  min-width:
+    clamp(180px,24vw,300px);
+
+  justify-content:center;
+
+  border:
+    2px solid #27d64a;
+
+  box-shadow:
+    0 0 15px #18e74288,
+    0 6px 14px #0009;
+}
+
+.hero-main{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.hero-avatar{
+  width:50px;
+  height:50px;
+}
+
+.hero-cards{
+  position:absolute;
+
+  right:-105px;
+  top:-5px;
+}
+
+.hero-cards .card{
+  width:
+    clamp(44px,5vw,65px);
+
+  height:
+    clamp(60px,7vw,88px);
+}
+
+/* ===================================
+   AKTIONSTEXT
+=================================== */
+
+.player-action{
+  position:absolute;
+
+  left:50%;
+  bottom:-24px;
+
+  transform:
+    translateX(-50%);
 
   white-space:nowrap;
+
+  color:#ffe16d;
+
+  font-size:11px;
+
+  font-weight:1000;
+
+  text-shadow:
+    0 2px 3px #000;
+}
+
+/* ===================================
+   SPIELMELDUNG
+=================================== */
+
+.game-message{
+  position:absolute;
+
+  left:50%;
+  bottom:12%;
+
+  transform:
+    translateX(-50%);
+
+  z-index:15;
+
+  min-width:180px;
+
+  text-align:center;
+
+  color:#fff3a8;
+
+  font-weight:900;
+
+  font-size:
+    clamp(11px,1.4vw,16px);
+
+  text-shadow:
+    0 2px 3px #000;
+}
+
+/* ===================================
+   INFOBOXEN
+=================================== */
+
+.game-info{
+  display:grid;
+
+  grid-template-columns:
+    1.3fr 1fr 1fr 1fr;
+
+  gap:6px;
+
+  margin:
+    8px auto 0;
+
+  width:min(96vw,1300px);
+}
+
+.info-box{
+  min-width:0;
+
+  padding:
+    6px 10px;
+
+  border-radius:9px;
+
+  background:
+    linear-gradient(
+      #263b48,
+      #182a34
+    );
+
+  border:
+    1px solid #ffffff44;
+
+  box-shadow:
+    0 4px 8px #0006;
+}
+
+.info-box span{
+  display:block;
+
+  color:#e9c969;
+
+  font-size:10px;
+
+  font-weight:900;
+}
+
+.info-box strong{
+  display:block;
+
+  font-size:
+    clamp(14px,1.8vw,22px);
+
+  white-space:nowrap;
+
   overflow:hidden;
+
   text-overflow:ellipsis;
 }
 
-/* =========================
-   BUTTONS
-========================= */
+/* ===================================
+   BUTTONS UNTEN
+=================================== */
 
 .controls{
+  width:min(96vw,1300px);
+
+  margin:
+    6px auto 0;
+
   display:grid;
-  grid-template-columns:62px 62px 1fr;
+
+  grid-template-columns:
+    1fr 1fr 1.35fr 1.35fr 1.5fr;
 
   gap:5px;
-  margin-top:5px;
 }
 
-.control,
-.small,
-.dialog-card button{
-  border:0;
-  border-radius:9px;
+.action-button{
+  min-height:50px;
 
-  padding:8px 10px;
+  border:1px solid #ffffff44;
 
-  font-weight:900;
+  border-radius:8px;
+
   color:white;
 
-  background:var(--blue);
-  box-shadow:0 4px 0 #0005;
+  font-weight:1000;
 
-  cursor:pointer;
+  font-size:
+    clamp(12px,1.5vw,18px);
+
+  text-shadow:
+    0 2px 2px #0007;
+
+  box-shadow:
+    0 4px 0 #001923,
+    inset 0 1px #ffffff44;
 }
 
-.control:active,
-.small:active,
-.dialog-card button:active{
-  transform:translateY(2px);
-  box-shadow:0 2px 0 #0005;
+.action-button:active{
+  transform:
+    translateY(2px);
+
+  box-shadow:
+    0 2px 0 #001923;
 }
 
-.control.secondary{
-  background:#39596a;
+.action-button:disabled{
+  opacity:.35;
 }
 
-.control.spin{
+.fold{
   background:
     linear-gradient(
-      #29c84b,
-      #148c2c
+      #118fb7,
+      #056b91
     );
-
-  font-size:clamp(20px,2.5vw,27px);
 }
 
-/* =========================
-   SCHNELLBUTTONS
-========================= */
+.check{
+  background:
+    linear-gradient(
+      #168daf,
+      #075f7d
+    );
+}
 
-.quick-row{
-  display:flex;
+.call{
+  background:
+    linear-gradient(
+      #119ac3,
+      #08739a
+    );
+}
+
+.raise{
+  background:
+    linear-gradient(
+      #19a9cd,
+      #08799e
+    );
+}
+
+.deal{
+  background:
+    linear-gradient(
+      #28c94a,
+      #108b2c
+    );
+}
+
+.action-button small{
+  display:block;
+
+  font-size:9px;
+}
+
+/* ===================================
+   RAISE PANEL
+=================================== */
+
+.raise-panel{
+  width:min(96vw,700px);
+
+  margin:
+    6px auto 0;
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,1fr);
+
   gap:5px;
-
-  flex-wrap:wrap;
-  margin-top:5px;
 }
 
-.small{
-  padding:6px 9px;
-  font-size:11px;
-}
+.raise-panel button{
+  border:1px solid #ffffff44;
 
-/* =========================
-   MELDUNG
-========================= */
+  border-radius:8px;
 
-.message{
-  min-height:20px;
-  text-align:center;
+  padding:9px;
 
-  padding:4px 4px 0;
+  color:white;
 
-  color:var(--gold);
   font-weight:900;
 
-  text-shadow:0 2px 3px #000;
-}
-
-/* =========================
-   FREISPIELE
-========================= */
-
-.freespins{
-  text-align:center;
-  background:#0f7244;
-
-  border-radius:999px;
-  padding:5px 10px;
-
-  margin:5px auto 0;
-
-  width:max-content;
-  max-width:100%;
+  background:
+    linear-gradient(
+      #b58925,
+      #795812
+    );
 }
 
 .hidden{
-  display:none;
+  display:none !important;
 }
 
-/* =========================
-   HINWEIS
-========================= */
+/* ===================================
+   FOOTER
+=================================== */
 
 .footnote{
-  font-size:10px;
-  color:#eee;
-
-  padding:5px 4px;
-  line-height:1.3;
-
   text-align:center;
-  text-shadow:0 2px 4px #000;
+
+  padding:
+    7px 5px 3px;
+
+  color:#aebdc5;
+
+  font-size:10px;
 }
 
-/* =========================
-   DIALOGE
-========================= */
+/* ===================================
+   DIALOG
+=================================== */
 
 dialog{
   border:0;
-  border-radius:18px;
+
   padding:0;
 
   background:transparent;
-  color:var(--text);
 
-  max-width:min(88vw,680px);
+  color:white;
+
+  max-width:
+    min(92vw,500px);
 }
 
 dialog::backdrop{
-  background:#000b;
-  backdrop-filter:blur(4px);
+  background:#000c;
+
+  backdrop-filter:
+    blur(5px);
 }
 
 .dialog-card{
-  background:#251225f7;
-  border:1px solid #ffffff22;
+  padding:20px;
+
   border-radius:18px;
 
-  padding:18px;
+  background:
+    linear-gradient(
+      #183a4c,
+      #0c222e
+    );
 
-  min-width:min(80vw,420px);
-}
+  border:
+    1px solid #ffffff33;
 
-.dialog-card.wide{
-  min-width:min(86vw,660px);
+  box-shadow:
+    0 20px 50px #000c;
 }
 
 .dialog-card h2{
   margin-top:0;
 }
 
-.dialog-card label{
-  display:grid;
-  gap:6px;
-  margin:12px 0;
-}
-
-.dialog-card input{
-  width:100%;
-  border-radius:10px;
-  border:1px solid #ffffff33;
-
-  padding:12px;
-  background:#110a13;
-  color:white;
-}
-
-.dialog-card button{
-  margin:5px 3px;
-  background:#2b78a2;
-}
-
-.dialog-card .close{
-  background:#56505a;
-  width:100%;
-  margin-top:12px;
-}
-
-.dialog-card .danger{
-  background:#a52d3e;
-  width:100%;
-}
-
-/* =========================
-   COINS
-========================= */
-
-.preset-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-
-/* =========================
-   TABELLEN
-========================= */
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:14px;
-}
-
-th,
-td{
-  text-align:left;
-  padding:7px;
-  border-bottom:1px solid #ffffff1a;
-}
-
-th{
-  color:var(--gold);
-}
-
-/* =========================
-   STATISTIK
-========================= */
-
 .stat-grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
+
+  grid-template-columns:
+    1fr 1fr;
+
   gap:8px;
 }
 
-.statbox{
-  background:#ffffff0b;
+.stat-box{
+  padding:12px;
+
   border-radius:10px;
-  padding:10px;
+
+  background:#ffffff0c;
 }
 
-.statbox span{
+.stat-box span{
   display:block;
-  color:var(--muted);
-  font-size:12px;
+
+  color:#a9c0cc;
+
+  font-size:11px;
 }
 
-.statbox strong{
-  font-size:18px;
+.stat-box strong{
+  font-size:22px;
 }
 
-/* =========================
+.dialog-button{
+  width:100%;
+
+  margin-top:15px;
+
+  border:0;
+
+  border-radius:9px;
+
+  padding:11px;
+
+  background:#138ab5;
+
+  color:white;
+
+  font-weight:900;
+}
+
+/* ===================================
+   GEWINNER
+=================================== */
+
+.player.winner{
+  animation:
+    winnerGlow .65s
+    ease-in-out
+    infinite alternate;
+}
+
+@keyframes winnerGlow{
+
+  from{
+    box-shadow:
+      0 0 8px #ffd85a;
+  }
+
+  to{
+    box-shadow:
+      0 0 0 4px #ffd85a,
+      0 0 30px #ffd85a;
+  }
+}
+
+/* ===================================
+   KARTEN ANIMATION
+=================================== */
+
+.card.dealt{
+  animation:
+    dealCard .3s ease-out;
+}
+
+@keyframes dealCard{
+
+  from{
+    opacity:0;
+
+    transform:
+      translateY(-30px)
+      scale(.7)
+      rotate(-8deg);
+  }
+
+  to{
+    opacity:1;
+
+    transform:
+      translateY(0)
+      scale(1)
+      rotate(0);
+  }
+}
+
+/* ===================================
    QUERFORMAT
-========================= */
+=================================== */
 
 @media (orientation:landscape){
 
-  body{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+  .topbar{
+    padding-top:4px;
   }
 
-  .app{
-    width:min(82vw,1040px);
-    margin:0 auto;
-    padding:4px 8px 6px;
+  .poker-table{
+    width:min(88vw,1250px);
   }
+}
+
+/* ===================================
+   KLEINE HANDYS QUERFORMAT
+=================================== */
+
+@media
+(orientation:landscape)
+and (max-height:500px){
 
   .topbar{
-    margin-bottom:3px;
+    height:38px;
+
+    padding:
+      2px 8px;
   }
 
-  .brand{
-    font-size:clamp(19px,2.2vw,30px);
+  .logo{
+    font-size:18px;
   }
 
-  .tagline{
+  .logo small{
     display:none;
   }
 
-  .machine{
-    padding:6px;
-    border-radius:18px;
+  .top-button{
+    padding:
+      5px 9px;
+
+    font-size:10px;
   }
 
-  .jackpot{
-    padding:4px 8px;
-    margin-bottom:4px;
+  .poker-room{
+    padding-top:0;
   }
 
-  .reels{
-    height:min(44vh,380px);
-    min-height:190px;
+  .poker-table{
+    width:min(82vw,950px);
 
-    gap:4px;
-    padding:5px;
+    max-height:62vh;
   }
 
-  .symbol-img{
-    width:80%;
-    height:80%;
-  }
-
-  .meters{
+  .game-info{
     margin-top:4px;
-    gap:4px;
   }
 
-  .meter{
-    padding:4px 6px;
+  .info-box{
+    padding:
+      3px 7px;
   }
 
   .controls{
-    margin-top:4px;
-    gap:4px;
-
-    grid-template-columns:
-      58px 58px 1fr;
+    margin-top:3px;
   }
 
-  .control{
-    padding:7px 8px;
-  }
-
-  .quick-row{
-    margin-top:4px;
-  }
-
-  .small{
-    padding:5px 8px;
-  }
-
-  .message{
-    padding-top:2px;
-    min-height:18px;
+  .action-button{
+    min-height:38px;
   }
 
   .footnote{
-    padding-top:3px;
+    display:none;
   }
 }
 
-/* =========================
-   HOCHKANT
-========================= */
+/* ===================================
+   HOCHKANT-HINWEIS
+=================================== */
 
 @media (orientation:portrait){
 
-  body{
-    display:block;
-  }
+  body::before{
+    content:"↻ Bitte Gerät ins Querformat drehen";
 
-  .app{
-    width:min(100%,760px);
-    padding:8px;
-  }
+    position:fixed;
 
-  .reels{
-    height:auto;
-    min-height:300px;
-  }
+    z-index:9999;
 
-  .meters{
-    grid-template-columns:1fr;
-  }
+    inset:0;
 
-  .controls{
-    grid-template-columns:64px 64px 1fr;
-  }
-}
+    display:flex;
 
-/* =========================
-   KLEINE QUERFORMAT-SCREENS
-========================= */
+    align-items:center;
+    justify-content:center;
 
-@media (orientation:landscape) and (max-height:500px){
+    text-align:center;
 
-  .app{
-    width:min(80vw,980px);
-    padding-top:2px;
-  }
+    padding:30px;
 
-  .topbar{
-    margin-bottom:2px;
-  }
+    background:
+      radial-gradient(
+        circle,
+        #16465d,
+        #06131e
+      );
 
-  .machine{
-    padding:5px;
-  }
+    color:white;
 
-  .jackpot{
-    padding:3px 7px;
-    margin-bottom:3px;
-  }
+    font-size:24px;
 
-  .reels{
-    height:40vh;
-    min-height:170px;
-  }
-
-  .meters{
-    gap:3px;
-    margin-top:3px;
-  }
-
-  .meter{
-    padding:3px 5px;
-  }
-
-  .controls{
-    gap:3px;
-    margin-top:3px;
-  }
-
-  .quick-row{
-    margin-top:3px;
-  }
-
-  .message{
-    min-height:16px;
-    padding-top:2px;
-  }
-
-  .footnote{
-    font-size:9px;
-    padding:2px;
+    font-weight:900;
   }
 }
