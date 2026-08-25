@@ -1,8 +1,26 @@
 "use strict";
 
-const BETS = [20e6, 50e6, 100e6, 200e6, 500e6, 1e9, 2e9];
+/* =========================
+   GRUNDEINSTELLUNGEN
+========================= */
+
+const BETS = [
+  20e6,
+  50e6,
+  100e6,
+  200e6,
+  500e6,
+  1e9,
+  2e9
+];
+
 const DEFAULT_BALANCE = 10e9;
 const DEFAULT_JACKPOT = 6e9;
+
+
+/* =========================
+   SYMBOLE
+========================= */
 
 const SYMBOLS = [
   {id:"JUG",  image:"circus_clown_v2.png",    weight:5,  pay:{3:30,4:125,5:300}},
@@ -18,33 +36,54 @@ const SYMBOLS = [
   {id:"SCAT", image:"scatter.png",             weight:0,  pay:{}}
 ];
 
+
+/* =========================
+   25 GEWINNLINIEN
+========================= */
+
 const LINES = [
   [0,0,0,0,0],
   [1,1,1,1,1],
   [2,2,2,2,2],
+
   [0,1,2,1,0],
   [2,1,0,1,2],
+
   [0,0,1,2,2],
   [2,2,1,0,0],
+
   [0,1,1,1,0],
   [2,1,1,1,2],
+
   [0,1,0,1,0],
   [2,1,2,1,2],
+
   [1,0,0,0,1],
   [1,2,2,2,1],
+
   [0,0,0,1,2],
   [2,2,2,1,0],
+
   [1,0,1,2,1],
   [1,2,1,0,1],
+
   [0,1,2,2,2],
   [2,1,0,0,0],
+
   [0,1,2,1,2],
   [2,1,0,1,0],
+
   [0,0,1,0,0],
   [2,2,1,2,2],
+
   [1,0,1,0,1],
   [1,2,1,2,1]
 ];
+
+
+/* =========================
+   SPIELSTAND
+========================= */
 
 function freshState(){
   return {
@@ -52,104 +91,163 @@ function freshState(){
     betIndex: 0,
     jackpot: DEFAULT_JACKPOT,
     freeSpins: 0,
-    stats: {
-      spins: 0,
-      wagered: 0,
-      paid: 0,
-      biggestWin: 0,
-      freeSpinsWon: 0
+
+    stats:{
+      spins:0,
+      wagered:0,
+      paid:0,
+      biggestWin:0,
+      freeSpinsWon:0
     }
   };
 }
 
+
 function loadState(){
   try{
-    const raw = localStorage.getItem("circusChanceStateV1");
+
+    const raw =
+      localStorage.getItem(
+        "circusChanceStateV1"
+      );
 
     if(!raw){
       return freshState();
     }
 
-    const saved = JSON.parse(raw);
-    const base = freshState();
+    const saved =
+      JSON.parse(raw);
+
+    const base =
+      freshState();
 
     return {
       ...base,
       ...saved,
-      stats: {
+
+      stats:{
         ...base.stats,
         ...(saved.stats || {})
       }
     };
 
   }catch(e){
+
     return freshState();
   }
 }
 
+
 const state = loadState();
+
 let spinning = false;
 
-const $ = id => document.getElementById(id);
 
-const reelsEl = $("reels");
-const balanceValue = $("balanceValue");
-const betValue = $("betValue");
-const winValue = $("winValue");
-const jackpotValue = $("jackpotValue");
-const message = $("message");
-const freeSpinsEl = $("freeSpins");
+/* =========================
+   HTML-ELEMENTE
+========================= */
+
+const $ = id =>
+  document.getElementById(id);
+
+let reelsEl;
+let balanceValue;
+let betValue;
+let winValue;
+let jackpotValue;
+let message;
+let freeSpinsEl;
+
+
+/* =========================
+   SPEICHERN
+========================= */
 
 function saveState(){
+
   localStorage.setItem(
     "circusChanceStateV1",
     JSON.stringify(state)
   );
 }
 
+
+/* =========================
+   ZAHLEN
+========================= */
+
 function fmt(n){
-  return Math.round(n).toLocaleString("de-DE");
+
+  return Math
+    .round(n)
+    .toLocaleString("de-DE");
 }
 
+
 function short(n){
+
   if(n >= 1e12){
-    return (n / 1e12)
-      .toFixed(2)
-      .replace(".", ",") + "T";
+
+    return (
+      n / 1e12
+    )
+    .toFixed(2)
+    .replace(".",",") + "T";
   }
+
 
   if(n >= 1e9){
-    return (n / 1e9)
-      .toFixed(n % 1e9 ? 1 : 0)
-      .replace(".", ",") + "B";
+
+    return (
+      n / 1e9
+    )
+    .toFixed(
+      n % 1e9 ? 1 : 0
+    )
+    .replace(".",",") + "B";
   }
 
+
   if(n >= 1e6){
-    return (n / 1e6)
-      .toFixed(n % 1e6 ? 1 : 0)
-      .replace(".", ",") + "M";
+
+    return (
+      n / 1e6
+    )
+    .toFixed(
+      n % 1e6 ? 1 : 0
+    )
+    .replace(".",",") + "M";
   }
+
 
   return fmt(n);
 }
 
 
-/* =====================================
-   SYMBOLAUSWAHL
-   Scatter nur auf Walze 1, 3 und 5
-===================================== */
+/* =========================
+   SCATTER NUR AUF
+   WALZE 1 / 3 / 5
+========================= */
 
 function allowedSymbolsForReel(reel){
 
-  const arr = SYMBOLS.filter(
-    s => s.id !== "SCAT"
-  );
-
-  if(reel === 0 || reel === 2 || reel === 4){
-
-    const scatter = SYMBOLS.find(
-      s => s.id === "SCAT"
+  const arr =
+    SYMBOLS.filter(
+      s => s.id !== "SCAT"
     );
+
+
+  if(
+    reel === 0 ||
+    reel === 2 ||
+    reel === 4
+  ){
+
+    const scatter =
+      SYMBOLS.find(
+        s => s.id === "SCAT"
+      );
+
 
     arr.push({
       ...scatter,
@@ -157,24 +255,31 @@ function allowedSymbolsForReel(reel){
     });
   }
 
+
   return arr;
 }
 
 
-/* =====================================
-   ZUFALLSAUSWAHL
-===================================== */
+/* =========================
+   ZUFALLSSYMBOL
+========================= */
 
 function weightedPick(arr){
 
-  const total = arr.reduce(
-    (a,s) => a + s.weight,
-    0
-  );
+  const total =
+    arr.reduce(
+      (sum,s) =>
+        sum + s.weight,
+      0
+    );
 
-  let r = Math.random() * total;
+
+  let r =
+    Math.random() * total;
+
 
   for(const s of arr){
+
     r -= s.weight;
 
     if(r <= 0){
@@ -182,42 +287,51 @@ function weightedPick(arr){
     }
   }
 
-  return arr[arr.length - 1];
+
+  return arr[
+    arr.length - 1
+  ];
 }
 
 
-/* =====================================
+/* =========================
    SPIELFELD ERZEUGEN
-===================================== */
+========================= */
 
 function makeGrid(){
 
   const grid = [];
 
-  for(let c=0; c<5; c++){
+
+  for(let c=0;c<5;c++){
 
     grid[c] = [];
 
-    for(let r=0; r<3; r++){
+
+    for(let r=0;r<3;r++){
 
       const base =
         weightedPick(
           allowedSymbolsForReel(c)
         );
 
+
       const cell = {
         ...base,
         bonus:0
       };
 
+
       if(
         c >= 2 &&
-        !["SCAT","WILD"].includes(cell.id) &&
+        !["SCAT","WILD"]
+          .includes(cell.id) &&
         Math.random() < 0.16
       ){
 
         const multipliers =
           [0.5,1,2,4,8,20];
+
 
         const mult =
           multipliers[
@@ -227,101 +341,164 @@ function makeGrid(){
             )
           ];
 
+
         cell.bonus =
-          BETS[state.betIndex] * mult;
+          BETS[state.betIndex] *
+          mult;
       }
+
 
       grid[c][r] = cell;
     }
   }
 
+
   return grid;
 }
 
 
-/* =====================================
-   GEWINNLINIE AUSWERTEN
-===================================== */
+/* =========================
+   EINZELNE GEWINNLINIE
+========================= */
 
-function lineResult(grid,line,bet){
+function lineResult(
+  grid,
+  line,
+  bet
+){
 
   let baseId = null;
   let count = 0;
+
   const coords = [];
 
-  for(let c=0; c<5; c++){
+
+  for(let c=0;c<5;c++){
 
     const symbol =
-      grid[c][line[c]];
+      grid[c][
+        line[c]
+      ];
 
-    if(symbol.id === "SCAT"){
+
+    if(
+      symbol.id === "SCAT"
+    ){
       break;
     }
+
 
     if(
       baseId === null &&
       symbol.id !== "WILD"
     ){
-      baseId = symbol.id;
+
+      baseId =
+        symbol.id;
     }
 
-    if(baseId === null){
+
+    if(
+      baseId === null
+    ){
+
       count++;
-      coords.push([c,line[c]]);
+
+      coords.push([
+        c,
+        line[c]
+      ]);
+
       continue;
     }
+
 
     if(
       symbol.id === baseId ||
       symbol.id === "WILD"
     ){
+
       count++;
-      coords.push([c,line[c]]);
+
+      coords.push([
+        c,
+        line[c]
+      ]);
+
     }else{
+
       break;
     }
   }
 
-  if(baseId === null){
+
+  if(
+    baseId === null
+  ){
+
     baseId = "WILD";
   }
 
-  if(count < 3){
+
+  if(
+    count < 3
+  ){
+
     return {
       pay:0,
       coords:[]
     };
   }
+
 
   const sym =
     SYMBOLS.find(
-      s => s.id === baseId
+      s =>
+        s.id === baseId
     );
 
+
   if(!sym){
+
     return {
       pay:0,
       coords:[]
     };
   }
 
+
   /* 5 WILD = Jackpot */
+
   if(
     baseId === "WILD" &&
     count === 5
   ){
+
     return {
       pay:state.jackpot,
       coords
     };
   }
 
-  let pay =
-    bet * (sym.pay[count] || 0);
 
-  for(const [c,r] of coords){
-    pay += grid[c][r].bonus || 0;
+  let pay =
+    bet *
+    (
+      sym.pay[count] ||
+      0
+    );
+
+
+  for(
+    const [c,r]
+    of coords
+  ){
+
+    pay +=
+      grid[c][r].bonus ||
+      0;
   }
+
 
   return {
     pay,
@@ -330,79 +507,117 @@ function lineResult(grid,line,bet){
 }
 
 
-/* =====================================
-   GESAMTEN SPIN AUSWERTEN
-===================================== */
+/* =========================
+   SPIN AUSWERTEN
+========================= */
 
-function scoreGrid(grid,bet){
+function scoreGrid(
+  grid,
+  bet
+){
 
   let total = 0;
-  const wins = new Set();
 
-  for(const line of LINES){
+  const wins =
+    new Set();
 
-    const res =
+
+  for(
+    const line
+    of LINES
+  ){
+
+    const result =
       lineResult(
         grid,
         line,
         bet
       );
 
-    total += res.pay;
 
-    res.coords.forEach(
-      ([c,r]) =>
-        wins.add(c + "-" + r)
-    );
+    total +=
+      result.pay;
+
+
+    result.coords
+      .forEach(
+        ([c,r]) =>
+          wins.add(
+            c + "-" + r
+          )
+      );
   }
 
 
-  /* =================================
-     FREISPIELE
+  /* =====================
+     10 FREISPIELE
 
-     Scatter auf:
+     Scatter auf
      Walze 1
      Walze 3
      Walze 5
+  ===================== */
 
-     = 10 Freispiele
-  ================================= */
+  const scatterReels =
+    [0,2,4];
 
-  const scatterReels = [0,2,4];
 
   const hasScatter =
     scatterReels.map(
       c =>
         grid[c].some(
           cell =>
-            cell.id === "SCAT"
+            cell.id ===
+            "SCAT"
         )
     );
 
+
   const freeTrigger =
-    hasScatter.every(Boolean);
+    hasScatter
+      .every(Boolean);
+
 
   const freeAward =
-    freeTrigger ? 10 : 0;
+    freeTrigger
+      ? 10
+      : 0;
+
 
   let scatters = 0;
 
-  for(const c of scatterReels){
 
-    for(let r=0; r<3; r++){
+  for(
+    const c
+    of scatterReels
+  ){
+
+    for(
+      let r=0;
+      r<3;
+      r++
+    ){
 
       if(
-        grid[c][r].id === "SCAT"
+        grid[c][r].id ===
+        "SCAT"
       ){
 
         scatters++;
 
-        if(freeTrigger){
-          wins.add(c + "-" + r);
+
+        if(
+          freeTrigger
+        ){
+
+          wins.add(
+            c + "-" + r
+          );
         }
       }
     }
   }
+
 
   return {
     total,
@@ -414,97 +629,170 @@ function scoreGrid(grid,bet){
 }
 
 
-/* =====================================
+/* =========================
    SPIELFELD ANZEIGEN
-===================================== */
+========================= */
 
 function renderGrid(
   grid,
-  wins = new Set()
+  wins=new Set()
 ){
 
   if(!reelsEl){
     return;
   }
 
+
   reelsEl.innerHTML = "";
 
-  for(let r=0; r<3; r++){
 
-    for(let c=0; c<5; c++){
+  for(let r=0;r<3;r++){
+
+    for(let c=0;c<5;c++){
 
       const cell =
         grid[c][r];
 
+
       const div =
-        document.createElement("div");
+        document
+          .createElement(
+            "div"
+          );
+
 
       div.className =
         "cell" +
         (
-          wins.has(c + "-" + r)
-            ? " win"
-            : ""
+          wins.has(
+            c + "-" + r
+          )
+          ? " win"
+          : ""
         );
 
+
       const icon =
-        document.createElement("img");
+        document
+          .createElement(
+            "img"
+          );
 
-      icon.src = cell.image;
-      icon.alt = cell.id;
-      icon.className = "symbol-img";
 
-      div.appendChild(icon);
+      icon.src =
+        cell.image;
+
+      icon.alt =
+        cell.id;
+
+      icon.className =
+        "symbol-img";
+
+
+      /* Falls PNG fehlt */
+
+      icon.onerror = () => {
+
+        icon.style.display =
+          "none";
+
+        div.textContent =
+          "?";
+      };
+
+
+      div.appendChild(
+        icon
+      );
+
 
       if(cell.bonus){
 
         const bonus =
-          document.createElement("span");
+          document
+            .createElement(
+              "span"
+            );
 
-        bonus.className = "bonus";
+
+        bonus.className =
+          "bonus";
+
+
         bonus.textContent =
-          short(cell.bonus);
+          short(
+            cell.bonus
+          );
 
-        div.appendChild(bonus);
+
+        div.appendChild(
+          bonus
+        );
       }
 
+
       div.style.gridColumn =
-        String(c + 1);
+        String(c+1);
+
 
       div.style.gridRow =
-        String(r + 1);
+        String(r+1);
 
-      reelsEl.appendChild(div);
+
+      reelsEl.appendChild(
+        div
+      );
     }
   }
 }
 
 
-/* =====================================
-   ANZEIGE AKTUALISIEREN
-===================================== */
+/* =========================
+   ANZEIGE
+========================= */
 
 function updateUI(){
 
   balanceValue.textContent =
-    fmt(state.balance);
+    fmt(
+      state.balance
+    );
+
 
   betValue.textContent =
-    fmt(BETS[state.betIndex]);
+    fmt(
+      BETS[
+        state.betIndex
+      ]
+    );
+
 
   jackpotValue.textContent =
-    fmt(state.jackpot);
+    fmt(
+      state.jackpot
+    );
 
-  if(state.freeSpins > 0){
+
+  if(
+    state.freeSpins > 0
+  ){
 
     freeSpinsEl
       .classList
-      .remove("hidden");
+      .remove(
+        "hidden"
+      );
+
 
     const strong =
-      freeSpinsEl.querySelector("strong");
+      freeSpinsEl
+        .querySelector(
+          "strong"
+        );
+
 
     if(strong){
+
       strong.textContent =
         state.freeSpins;
     }
@@ -513,107 +801,180 @@ function updateUI(){
 
     freeSpinsEl
       .classList
-      .add("hidden");
+      .add(
+        "hidden"
+      );
   }
+
 
   saveState();
 }
 
 
+/* =========================
+   PAUSE
+========================= */
+
 function sleep(ms){
+
   return new Promise(
     resolve =>
-      setTimeout(resolve,ms)
+      setTimeout(
+        resolve,
+        ms
+      )
   );
 }
 
 
-/* =====================================
-   WALZENANIMATION
-===================================== */
+/* =========================
+   WALZENBEWEGUNG
+========================= */
 
-async function animateReels(targetGrid){
+async function animateReels(
+  targetGrid
+){
 
-  let shown = makeGrid();
+  let shown =
+    makeGrid();
 
-  for(
-    let reel=0;
-    reel<5;
-    reel++
-  ){
 
-    const ticks =
-      7 + reel * 2;
+  /*
+    Jede Walze stoppt
+    etwas später.
+  */
+
+  const stopTimes = [
+    550,
+    800,
+    1080,
+    1390,
+    1740
+  ];
+
+
+  const start =
+    performance.now();
+
+
+  const stopped = [
+    false,
+    false,
+    false,
+    false,
+    false
+  ];
+
+
+  while(true){
+
+    const elapsed =
+      performance.now() -
+      start;
+
 
     for(
-      let t=0;
-      t<ticks;
-      t++
+      let c=0;
+      c<5;
+      c++
     ){
 
-      /* Bereits gestoppte Walzen */
-      for(
-        let c=0;
-        c<reel;
-        c++
+      /*
+        Walze soll jetzt
+        stoppen
+      */
+
+      if(
+        elapsed >=
+        stopTimes[c]
       ){
 
-        shown[c] =
-          targetGrid[c].map(
-            cell => ({...cell})
-          );
-      }
-
-      /* Noch laufende Walzen */
-      for(
-        let c=reel;
-        c<5;
-        c++
-      ){
-
-        for(
-          let r=0;
-          r<3;
-          r++
+        if(
+          !stopped[c]
         ){
 
-          const base =
-            weightedPick(
-              allowedSymbolsForReel(c)
-            );
+          shown[c] =
+            targetGrid[c]
+              .map(
+                cell =>
+                  ({...cell})
+              );
 
-          shown[c][r] = {
-            ...base,
-            bonus:0
-          };
+
+          stopped[c] =
+            true;
         }
+
+
+        continue;
       }
 
-      renderGrid(shown);
 
-      await sleep(
-        45 + t * 5
-      );
+      /*
+        Walze läuft noch
+      */
+
+      for(
+        let r=0;
+        r<3;
+        r++
+      ){
+
+        const base =
+          weightedPick(
+            allowedSymbolsForReel(c)
+          );
+
+
+        shown[c][r] = {
+          ...base,
+          bonus:0
+        };
+      }
     }
 
-    /* Walze stoppt */
-    shown[reel] =
-      targetGrid[reel].map(
-        cell => ({...cell})
-      );
 
-    renderGrid(shown);
+    renderGrid(
+      shown
+    );
 
-    await sleep(110);
+
+    if(
+      stopped
+        .every(Boolean)
+    ){
+
+      break;
+    }
+
+
+    /*
+      Am Anfang schnell,
+      zum Ende minimal
+      langsamer.
+    */
+
+    const delay =
+      elapsed < 900
+        ? 42
+        : 58;
+
+
+    await sleep(
+      delay
+    );
   }
 
-  renderGrid(targetGrid);
+
+  renderGrid(
+    targetGrid
+  );
 }
 
 
-/* =====================================
+/* =========================
    EIN SPIN
-===================================== */
+========================= */
 
 async function spin(
   oneOfAuto=false
@@ -623,11 +984,16 @@ async function spin(
     return;
   }
 
+
   const bet =
-    BETS[state.betIndex];
+    BETS[
+      state.betIndex
+    ];
+
 
   const isFree =
     state.freeSpins > 0;
+
 
   if(
     !isFree &&
@@ -640,12 +1006,18 @@ async function spin(
     return;
   }
 
+
   spinning = true;
 
-  const spinBtn = $("spinBtn");
+
+  const spinBtn =
+    $("spinBtn");
+
 
   if(spinBtn){
-    spinBtn.disabled = true;
+
+    spinBtn.disabled =
+      true;
   }
 
 
@@ -655,12 +1027,17 @@ async function spin(
 
   }else{
 
-    state.balance -= bet;
-    state.stats.wagered += bet;
+    state.balance -=
+      bet;
+
+
+    state.stats.wagered +=
+      bet;
   }
 
 
   state.stats.spins++;
+
 
   state.jackpot +=
     Math.round(
@@ -668,9 +1045,14 @@ async function spin(
     );
 
 
-  const grid = makeGrid();
+  const grid =
+    makeGrid();
 
-  await animateReels(grid);
+
+  await animateReels(
+    grid
+  );
+
 
   const result =
     scoreGrid(
@@ -682,8 +1064,10 @@ async function spin(
   state.balance +=
     result.total;
 
+
   state.stats.paid +=
     result.total;
+
 
   state.stats.biggestWin =
     Math.max(
@@ -692,36 +1076,55 @@ async function spin(
     );
 
 
-  if(result.freeAward){
+  if(
+    result.freeAward
+  ){
 
     state.freeSpins +=
       result.freeAward;
 
-    state.stats.freeSpinsWon +=
+
+    state.stats
+      .freeSpinsWon +=
       result.freeAward;
   }
 
+
+  /*
+    Gewinner werden
+    mit "win" markiert.
+    Das CSS vergrößert
+    diese Symbole.
+  */
 
   renderGrid(
     grid,
     result.wins
   );
 
+
   winValue.textContent =
-    fmt(result.total);
+    fmt(
+      result.total
+    );
 
 
-  if(result.freeAward){
+  if(
+    result.freeAward
+  ){
 
     message.textContent =
       "🎪 JOKER AUF WALZE 1 · 3 · 5 — 10 FREISPIELE!";
 
+
   }else if(
-    result.total >= bet * 50
+    result.total >=
+    bet * 50
   ){
 
     message.textContent =
       `🎉 HUGE WIN: ${short(result.total)}`;
+
 
   }else if(
     result.total > 0
@@ -730,49 +1133,65 @@ async function spin(
     message.textContent =
       `Gewinn: ${short(result.total)}`;
 
+
   }else{
 
     message.textContent =
       isFree
-        ? "Freispin ohne Gewinn."
-        : "Kein Gewinn.";
+      ? "Freispin ohne Gewinn."
+      : "Kein Gewinn.";
   }
 
 
   updateUI();
 
-  spinning = false;
+
+  spinning =
+    false;
+
 
   if(spinBtn){
-    spinBtn.disabled = false;
+
+    spinBtn.disabled =
+      false;
   }
 
 
   /*
-    Manuell ausgelöste Freispiele
-    automatisch nacheinander spielen
+    Freispiele automatisch
+    nacheinander
   */
+
   if(
     !oneOfAuto &&
     state.freeSpins > 0
   ){
 
-    await sleep(500);
+    /*
+      Gewinnsymbole bleiben
+      kurz sichtbar.
+    */
+
+    await sleep(
+      850
+    );
+
 
     spin();
   }
 }
 
 
-/* =====================================
+/* =========================
    AUTO ×10
-===================================== */
+========================= */
 
 async function autoSpins(n){
 
   if(spinning){
     return;
   }
+
 
   for(
     let i=0;
@@ -782,22 +1201,27 @@ async function autoSpins(n){
 
     if(
       state.balance <
-        BETS[state.betIndex] &&
+      BETS[state.betIndex] &&
       state.freeSpins === 0
     ){
+
       break;
     }
 
+
     await spin(true);
 
-    await sleep(130);
+
+    await sleep(
+      300
+    );
   }
 }
 
 
-/* =====================================
-   EINSATZ
-===================================== */
+/* =========================
+   EINSATZ ÄNDERN
+========================= */
 
 function setBet(delta){
 
@@ -805,238 +1229,338 @@ function setBet(delta){
     return;
   }
 
+
   state.betIndex =
     Math.min(
       BETS.length - 1,
+
       Math.max(
         0,
-        state.betIndex + delta
+
+        state.betIndex +
+        delta
       )
     );
+
 
   updateUI();
 }
 
 
-/* =====================================
-   COINS HINZUFÜGEN
-===================================== */
+/* =========================
+   COINS
+========================= */
 
 function addCoins(amount){
 
   if(
-    !Number.isFinite(amount) ||
+    !Number
+      .isFinite(amount) ||
     amount <= 0
   ){
+
     return;
   }
 
+
   state.balance +=
-    Math.floor(amount);
+    Math.floor(
+      amount
+    );
+
 
   message.textContent =
     `${short(amount)} virtuelle Coins hinzugefügt.`;
+
 
   updateUI();
 }
 
 
-/* =====================================
+/* =========================
    STATISTIK
-===================================== */
+========================= */
 
 function showStats(){
 
-  const s = state.stats;
+  const s =
+    state.stats;
+
 
   const rtp =
     s.wagered > 0
-      ? (
-          s.paid /
-          s.wagered *
-          100
-        )
-      : 0;
 
-  $("statsContent").innerHTML = `
+    ? (
+        s.paid /
+        s.wagered *
+        100
+      )
+
+    : 0;
+
+
+  $("statsContent")
+    .innerHTML = `
+
     <div class="stat-grid">
 
       <div class="statbox">
         <span>Spins</span>
-        <strong>${fmt(s.spins)}</strong>
+        <strong>
+          ${fmt(s.spins)}
+        </strong>
       </div>
 
       <div class="statbox">
         <span>Gesamteinsatz</span>
-        <strong>${short(s.wagered)}</strong>
+        <strong>
+          ${short(s.wagered)}
+        </strong>
       </div>
 
       <div class="statbox">
         <span>Auszahlungen</span>
-        <strong>${short(s.paid)}</strong>
+        <strong>
+          ${short(s.paid)}
+        </strong>
       </div>
 
       <div class="statbox">
         <span>Session-RTP</span>
         <strong>
-          ${rtp
-            .toFixed(2)
-            .replace(".",",")} %
+          ${
+            rtp
+              .toFixed(2)
+              .replace(".",",")
+          } %
         </strong>
       </div>
 
       <div class="statbox">
         <span>Größter Gewinn</span>
-        <strong>${short(s.biggestWin)}</strong>
+        <strong>
+          ${short(s.biggestWin)}
+        </strong>
       </div>
 
       <div class="statbox">
         <span>Freispiele erhalten</span>
-        <strong>${fmt(s.freeSpinsWon)}</strong>
+        <strong>
+          ${fmt(s.freeSpinsWon)}
+        </strong>
       </div>
 
     </div>
   `;
 
-  $("statsDialog").showModal();
+
+  $("statsDialog")
+    .showModal();
 }
 
 
-/* =====================================
-   BUTTONS
-===================================== */
+/* =========================
+   BUTTONS VERBINDEN
+========================= */
 
-$("spinBtn")
-  .addEventListener(
-    "click",
-    () => spin()
-  );
+function bindButtons(){
 
-$("auto10")
-  .addEventListener(
-    "click",
-    () => autoSpins(10)
-  );
-
-$("betDown")
-  .addEventListener(
-    "click",
-    () => setBet(-1)
-  );
-
-$("betUp")
-  .addEventListener(
-    "click",
-    () => setBet(1)
-  );
-
-$("addCoinsBtn")
-  .addEventListener(
-    "click",
-    () =>
-      $("coinsDialog")
-        .showModal()
-  );
-
-$("statsBtn")
-  .addEventListener(
-    "click",
-    showStats
-  );
-
-$("rulesBtn")
-  .addEventListener(
-    "click",
-    () =>
-      $("rulesDialog")
-        .showModal()
-  );
+  $("spinBtn")
+    .addEventListener(
+      "click",
+      () => spin()
+    );
 
 
-document
-  .querySelectorAll("[data-add]")
-  .forEach(btn => {
-
-    btn.addEventListener(
+  $("auto10")
+    .addEventListener(
       "click",
       () =>
+        autoSpins(10)
+    );
+
+
+  $("betDown")
+    .addEventListener(
+      "click",
+      () =>
+        setBet(-1)
+    );
+
+
+  $("betUp")
+    .addEventListener(
+      "click",
+      () =>
+        setBet(1)
+    );
+
+
+  $("addCoinsBtn")
+    .addEventListener(
+      "click",
+      () =>
+        $("coinsDialog")
+          .showModal()
+    );
+
+
+  $("statsBtn")
+    .addEventListener(
+      "click",
+      showStats
+    );
+
+
+  $("rulesBtn")
+    .addEventListener(
+      "click",
+      () =>
+        $("rulesDialog")
+          .showModal()
+    );
+
+
+  document
+    .querySelectorAll(
+      "[data-add]"
+    )
+    .forEach(
+      btn => {
+
+        btn.addEventListener(
+          "click",
+          () =>
+            addCoins(
+              Number(
+                btn.dataset.add
+              )
+            )
+        );
+      }
+    );
+
+
+  $("customCoinsBtn")
+    .addEventListener(
+      "click",
+      () => {
+
         addCoins(
           Number(
-            btn.dataset.add
+            $("customCoins")
+              .value
           )
-        )
-    );
-  });
-
-
-$("customCoinsBtn")
-  .addEventListener(
-    "click",
-    () => {
-
-      addCoins(
-        Number(
-          $("customCoins").value
-        )
-      );
-
-      $("customCoins").value = "";
-    }
-  );
-
-
-$("resetStatsBtn")
-  .addEventListener(
-    "click",
-    () => {
-
-      if(
-        confirm(
-          "Statistik wirklich zurücksetzen?"
-        )
-      ){
-
-        state.stats = {
-          spins:0,
-          wagered:0,
-          paid:0,
-          biggestWin:0,
-          freeSpinsWon:0
-        };
-
-        saveState();
-        showStats();
-      }
-    }
-  );
-
-
-/* =====================================
-   SERVICE WORKER
-===================================== */
-
-if(
-  "serviceWorker" in navigator
-){
-
-  window.addEventListener(
-    "load",
-    () => {
-
-      navigator
-        .serviceWorker
-        .register("sw.js")
-        .catch(
-          () => {}
         );
-    }
-  );
+
+
+        $("customCoins")
+          .value = "";
+      }
+    );
+
+
+  $("resetStatsBtn")
+    .addEventListener(
+      "click",
+      () => {
+
+        if(
+          confirm(
+            "Statistik wirklich zurücksetzen?"
+          )
+        ){
+
+          state.stats = {
+            spins:0,
+            wagered:0,
+            paid:0,
+            biggestWin:0,
+            freeSpinsWon:0
+          };
+
+
+          saveState();
+
+          showStats();
+        }
+      }
+    );
 }
 
 
-/* =====================================
-   START
-===================================== */
+/* =========================
+   START DER APP
+========================= */
 
-renderGrid(makeGrid());
-updateUI();
+function init(){
+
+  reelsEl =
+    $("reels");
+
+  balanceValue =
+    $("balanceValue");
+
+  betValue =
+    $("betValue");
+
+  winValue =
+    $("winValue");
+
+  jackpotValue =
+    $("jackpotValue");
+
+  message =
+    $("message");
+
+  freeSpinsEl =
+    $("freeSpins");
+
+
+  bindButtons();
+
+
+  renderGrid(
+    makeGrid()
+  );
+
+
+  updateUI();
+
+
+  if(
+    "serviceWorker"
+    in navigator
+  ){
+
+    navigator
+      .serviceWorker
+      .register("sw.js")
+      .catch(
+        () => {}
+      );
+  }
+}
+
+
+/*
+  Funktioniert egal,
+  ob app.js oben oder
+  unten in index.html steht.
+*/
+
+if(
+  document.readyState ===
+  "loading"
+){
+
+  document
+    .addEventListener(
+      "DOMContentLoaded",
+      init
+    );
+
+}else{
+
+  init();
+}
