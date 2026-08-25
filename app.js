@@ -4,159 +4,154 @@
    GRUNDEINSTELLUNGEN
 ========================= */
 
-const BETS = [
-  20e6,
-  50e6,
-  100e6,
-  200e6,
-  500e6,
-  1e9,
-  2e9
+const STARTING_STACK = 10000;
+const SMALL_BLIND = 50;
+const BIG_BLIND = 100;
+
+const SUITS = ["♠","♥","♦","♣"];
+const RANKS = [
+  {r:"2",v:2},
+  {r:"3",v:3},
+  {r:"4",v:4},
+  {r:"5",v:5},
+  {r:"6",v:6},
+  {r:"7",v:7},
+  {r:"8",v:8},
+  {r:"9",v:9},
+  {r:"10",v:10},
+  {r:"J",v:11},
+  {r:"Q",v:12},
+  {r:"K",v:13},
+  {r:"A",v:14}
 ];
 
-const DEFAULT_BALANCE = 10e9;
-const DEFAULT_JACKPOT = 6e9;
+const PLAYER_NAMES = ["DU","MAX","LISA","TOM"];
+
+const BOT_STYLE = {
+  1:"careful",
+  2:"balanced",
+  3:"aggressive"
+};
 
 
 /* =========================
-   SYMBOLE
+   DOM
 ========================= */
 
-const SYMBOLS = [
-  {id:"JUG",  image:"circus_clown_v2.png",    weight:5,  pay:{3:30,4:125,5:300}},
-  {id:"ELE",  image:"circus_elephant_v2.png", weight:7,  pay:{3:25,4:80,5:250}},
-  {id:"BEA",  image:"circus_bear_v2.png",     weight:9,  pay:{3:15,4:60,5:175}},
-  {id:"PAN",  image:"circus_seal_v2.png",     weight:11, pay:{3:12,4:50,5:125}},
-  {id:"HAT",  image:"hat.png",                weight:13, pay:{3:10,4:40,5:100}},
-  {id:"A",    image:"circus_A_v2.png",        weight:17, pay:{3:7,4:25,5:60}},
-  {id:"K",    image:"circus_K_v2.png",        weight:18, pay:{3:7,4:25,5:60}},
-  {id:"Q",    image:"circus_Q_v2.png",        weight:20, pay:{3:5,4:15,5:40}},
-  {id:"J",    image:"circus_J_v2.png",        weight:22, pay:{3:5,4:15,5:40}},
-  {id:"WILD", image:"circus_wild_v2.png",     weight:3,  pay:{3:40,4:200,5:0}},
-  {id:"SCAT", image:"scatter.png",             weight:0,  pay:{}}
-];
+const $ = id => document.getElementById(id);
+
+const potValue = $("potValue");
+const communityCardsEl = $("communityCards");
+const heroCardsEl = $("heroCards");
+const balanceValue = $("balanceValue");
+const bottomBalance = $("bottomBalance");
+const blindValue = $("blindValue");
+const betValue = $("betValue");
+const winValue = $("winValue");
+const message = $("message");
+const heroAction = $("heroAction");
+
+const foldBtn = $("foldBtn");
+const checkBtn = $("checkBtn");
+const callBtn = $("callBtn");
+const callAmount = $("callAmount");
+const raiseBtn = $("raiseBtn");
+const newHandBtn = $("newHandBtn");
+const raisePanel = $("raisePanel");
+
+const statsBtn = $("statsBtn");
+const newGameBtn = $("newGameBtn");
+const statsDialog = $("statsDialog");
+const closeStatsBtn = $("closeStatsBtn");
+
+const statHands = $("statHands");
+const statWins = $("statWins");
+const statLosses = $("statLosses");
+const statBiggestPot = $("statBiggestPot");
 
 
 /* =========================
-   25 GEWINNLINIEN
+   STATE
 ========================= */
 
-const LINES = [
-  [0,0,0,0,0],
-  [1,1,1,1,1],
-  [2,2,2,2,2],
-
-  [0,1,2,1,0],
-  [2,1,0,1,2],
-
-  [0,0,1,2,2],
-  [2,2,1,0,0],
-
-  [0,1,1,1,0],
-  [2,1,1,1,2],
-
-  [0,1,0,1,0],
-  [2,1,2,1,2],
-
-  [1,0,0,0,1],
-  [1,2,2,2,1],
-
-  [0,0,0,1,2],
-  [2,2,2,1,0],
-
-  [1,0,1,2,1],
-  [1,2,1,0,1],
-
-  [0,1,2,2,2],
-  [2,1,0,0,0],
-
-  [0,1,2,1,2],
-  [2,1,0,1,0],
-
-  [0,0,1,0,0],
-  [2,2,1,2,2],
-
-  [1,0,1,0,1],
-  [1,2,1,2,1]
-];
-
-
-/* =========================
-   SPIELSTAND
-========================= */
-
-function freshState(){
+function freshStats(){
   return {
-    balance: DEFAULT_BALANCE,
-    betIndex: 0,
-    jackpot: DEFAULT_JACKPOT,
-    freeSpins: 0,
-
-    stats:{
-      spins:0,
-      wagered:0,
-      paid:0,
-      biggestWin:0,
-      freeSpinsWon:0
-    }
+    hands:0,
+    wins:0,
+    losses:0,
+    biggestPot:0
   };
 }
 
+function freshState(){
+  return {
+    stacks:[
+      STARTING_STACK,
+      STARTING_STACK,
+      STARTING_STACK,
+      STARTING_STACK
+    ],
+    dealer:0,
+    stats:freshStats()
+  };
+}
 
 function loadState(){
   try{
+    const raw = localStorage.getItem("offlinePokerStateV1");
+    if(!raw) return freshState();
 
-    const raw =
-      localStorage.getItem(
-        "circusChanceStateV1"
-      );
-
-    if(!raw){
-      return freshState();
-    }
-
-    const saved =
-      JSON.parse(raw);
-
-    const base =
-      freshState();
+    const saved = JSON.parse(raw);
+    const base = freshState();
 
     return {
       ...base,
       ...saved,
-
       stats:{
         ...base.stats,
         ...(saved.stats || {})
       }
     };
-
   }catch(e){
-
     return freshState();
   }
 }
 
+const persistent = loadState();
 
-const state = loadState();
+let players = [];
+let deck = [];
+let community = [];
+let pot = 0;
 
-let spinning = false;
+let street = "idle";
+let currentBet = 0;
+let currentPlayer = 0;
+let lastWin = 0;
+
+let handRunning = false;
+let heroFolded = false;
 
 
 /* =========================
-   HTML-ELEMENTE
+   PLAYER OBJEKTE
 ========================= */
 
-const $ = id =>
-  document.getElementById(id);
+function buildPlayers(){
+  players = PLAYER_NAMES.map((name,i)=>({
+    id:i,
+    name,
+    stack:persistent.stacks[i] ?? STARTING_STACK,
+    hand:[],
+    folded:false,
+    allIn:false,
+    betStreet:0,
+    contributed:0,
+    acted:false
+  }));
+}
 
-let reelsEl;
-let balanceValue;
-let betValue;
-let winValue;
-let jackpotValue;
-let message;
-let freeSpinsEl;
+buildPlayers();
 
 
 /* =========================
@@ -164,1403 +159,1380 @@ let freeSpinsEl;
 ========================= */
 
 function saveState(){
-
+  persistent.stacks = players.map(p=>p.stack);
   localStorage.setItem(
-    "circusChanceStateV1",
-    JSON.stringify(state)
+    "offlinePokerStateV1",
+    JSON.stringify(persistent)
   );
 }
 
 
 /* =========================
-   ZAHLEN
+   HILFSFUNKTIONEN
 ========================= */
 
 function fmt(n){
-
-  return Math
-    .round(n)
-    .toLocaleString("de-DE");
+  return Math.round(n).toLocaleString("de-DE");
 }
 
-
-function short(n){
-
-  if(n >= 1e12){
-
-    return (
-      n / 1e12
-    )
-    .toFixed(2)
-    .replace(".",",") + "T";
-  }
-
-
-  if(n >= 1e9){
-
-    return (
-      n / 1e9
-    )
-    .toFixed(
-      n % 1e9 ? 1 : 0
-    )
-    .replace(".",",") + "B";
-  }
-
-
-  if(n >= 1e6){
-
-    return (
-      n / 1e6
-    )
-    .toFixed(
-      n % 1e6 ? 1 : 0
-    )
-    .replace(".",",") + "M";
-  }
-
-
-  return fmt(n);
+function sleep(ms){
+  return new Promise(resolve=>setTimeout(resolve,ms));
 }
 
 
 /* =========================
-   SCATTER NUR AUF
-   WALZE 1 / 3 / 5
+   DECK
 ========================= */
 
-function allowedSymbolsForReel(reel){
+function createDeck(){
+  const cards = [];
 
-  const arr =
-    SYMBOLS.filter(
-      s => s.id !== "SCAT"
-    );
-
-
-  if(
-    reel === 0 ||
-    reel === 2 ||
-    reel === 4
-  ){
-
-    const scatter =
-      SYMBOLS.find(
-        s => s.id === "SCAT"
-      );
-
-
-    arr.push({
-      ...scatter,
-      weight:4
-    });
+  for(const suit of SUITS){
+    for(const rank of RANKS){
+      cards.push({
+        rank:rank.r,
+        value:rank.v,
+        suit
+      });
+    }
   }
 
+  return cards;
+}
 
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
   return arr;
 }
 
-
-/* =========================
-   ZUFALLSSYMBOL
-========================= */
-
-function weightedPick(arr){
-
-  const total =
-    arr.reduce(
-      (sum,s) =>
-        sum + s.weight,
-      0
-    );
-
-
-  let r =
-    Math.random() * total;
-
-
-  for(const s of arr){
-
-    r -= s.weight;
-
-    if(r <= 0){
-      return s;
-    }
-  }
-
-
-  return arr[
-    arr.length - 1
-  ];
+function drawCard(){
+  return deck.pop();
 }
 
 
 /* =========================
-   SPIELFELD ERZEUGEN
+   KARTEN-HTML
 ========================= */
 
-function makeGrid(){
+function cardClass(card){
+  return card.suit==="♥" || card.suit==="♦"
+    ? "card red dealt"
+    : "card dealt";
+}
 
-  const grid = [];
+function cardHTML(card){
+  return `
+    <div class="${cardClass(card)}">
+      ${card.rank}${card.suit}
+    </div>
+  `;
+}
 
-
-  for(let c=0;c<5;c++){
-
-    grid[c] = [];
-
-
-    for(let r=0;r<3;r++){
-
-      const base =
-        weightedPick(
-          allowedSymbolsForReel(c)
-        );
-
-
-      const cell = {
-        ...base,
-        bonus:0
-      };
-
-
-      if(
-        c >= 2 &&
-        !["SCAT","WILD"]
-          .includes(cell.id) &&
-        Math.random() < 0.16
-      ){
-
-        const multipliers =
-          [0.5,1,2,4,8,20];
-
-
-        const mult =
-          multipliers[
-            Math.floor(
-              Math.random() *
-              multipliers.length
-            )
-          ];
-
-
-        cell.bonus =
-          BETS[state.betIndex] *
-          mult;
-      }
-
-
-      grid[c][r] = cell;
-    }
-  }
-
-
-  return grid;
+function cardBackHTML(){
+  return `<div class="card card-back">★</div>`;
 }
 
 
 /* =========================
-   EINZELNE GEWINNLINIE
+   UI PLAYER
 ========================= */
 
-function lineResult(
-  grid,
-  line,
-  bet
-){
+function playerEl(i){
+  return $("player"+i);
+}
 
-  let baseId = null;
-  let count = 0;
+function updatePlayerBoxes(){
+  for(let i=0;i<4;i++){
+    const el = playerEl(i);
+    if(!el) continue;
 
-  const coords = [];
+    const coinEl = el.querySelector(".player-coins");
+    if(coinEl) coinEl.textContent = fmt(players[i].stack);
 
+    el.classList.toggle("folded",players[i].folded);
+    el.classList.toggle("active",handRunning && currentPlayer===i);
+  }
+}
 
-  for(let c=0;c<5;c++){
+function setPlayerAction(i,text){
+  const el = playerEl(i);
+  if(!el) return;
 
-    const symbol =
-      grid[c][
-        line[c]
-      ];
-
-
-    if(
-      symbol.id === "SCAT"
-    ){
-      break;
-    }
-
-
-    if(
-      baseId === null &&
-      symbol.id !== "WILD"
-    ){
-
-      baseId =
-        symbol.id;
-    }
+  const action = el.querySelector(".player-action");
+  if(action) action.textContent = text || "";
+}
 
 
-    if(
-      baseId === null
-    ){
+/* =========================
+   KARTEN ANZEIGEN
+========================= */
 
-      count++;
+function renderHands(showBots=false){
+  heroCardsEl.innerHTML =
+    players[0].hand.map(cardHTML).join("");
 
-      coords.push([
-        c,
-        line[c]
-      ]);
+  for(let i=1;i<4;i++){
+    const el = playerEl(i);
+    const cards = el.querySelector(".cards");
 
-      continue;
-    }
+    if(!cards) continue;
 
-
-    if(
-      symbol.id === baseId ||
-      symbol.id === "WILD"
-    ){
-
-      count++;
-
-      coords.push([
-        c,
-        line[c]
-      ]);
-
+    if(showBots){
+      cards.innerHTML =
+        players[i].hand.map(cardHTML).join("");
     }else{
-
-      break;
-    }
-  }
-
-
-  if(
-    baseId === null
-  ){
-
-    baseId = "WILD";
-  }
-
-
-  if(
-    count < 3
-  ){
-
-    return {
-      pay:0,
-      coords:[]
-    };
-  }
-
-
-  const sym =
-    SYMBOLS.find(
-      s =>
-        s.id === baseId
-    );
-
-
-  if(!sym){
-
-    return {
-      pay:0,
-      coords:[]
-    };
-  }
-
-
-  /* 5 WILD = Jackpot */
-
-  if(
-    baseId === "WILD" &&
-    count === 5
-  ){
-
-    return {
-      pay:state.jackpot,
-      coords
-    };
-  }
-
-
-  let pay =
-    bet *
-    (
-      sym.pay[count] ||
-      0
-    );
-
-
-  for(
-    const [c,r]
-    of coords
-  ){
-
-    pay +=
-      grid[c][r].bonus ||
-      0;
-  }
-
-
-  return {
-    pay,
-    coords
-  };
-}
-
-
-/* =========================
-   SPIN AUSWERTEN
-========================= */
-
-function scoreGrid(
-  grid,
-  bet
-){
-
-  let total = 0;
-
-  const wins =
-    new Set();
-
-
-  for(
-    const line
-    of LINES
-  ){
-
-    const result =
-      lineResult(
-        grid,
-        line,
-        bet
-      );
-
-
-    total +=
-      result.pay;
-
-
-    result.coords
-      .forEach(
-        ([c,r]) =>
-          wins.add(
-            c + "-" + r
-          )
-      );
-  }
-
-
-  /* =====================
-     10 FREISPIELE
-
-     Scatter auf
-     Walze 1
-     Walze 3
-     Walze 5
-  ===================== */
-
-  const scatterReels =
-    [0,2,4];
-
-
-  const hasScatter =
-    scatterReels.map(
-      c =>
-        grid[c].some(
-          cell =>
-            cell.id ===
-            "SCAT"
-        )
-    );
-
-
-  const freeTrigger =
-    hasScatter
-      .every(Boolean);
-
-
-  const freeAward =
-    freeTrigger
-      ? 10
-      : 0;
-
-
-  let scatters = 0;
-
-
-  for(
-    const c
-    of scatterReels
-  ){
-
-    for(
-      let r=0;
-      r<3;
-      r++
-    ){
-
-      if(
-        grid[c][r].id ===
-        "SCAT"
-      ){
-
-        scatters++;
-
-
-        if(
-          freeTrigger
-        ){
-
-          wins.add(
-            c + "-" + r
-          );
-        }
-      }
-    }
-  }
-
-
-  return {
-    total,
-    wins,
-    scatters,
-    freeAward,
-    freeTrigger
-  };
-}
-
-
-/* =========================
-   SPIELFELD ANZEIGEN
-========================= */
-
-function renderGrid(
-  grid,
-  wins=new Set()
-){
-
-  if(!reelsEl){
-    return;
-  }
-
-
-  reelsEl.innerHTML = "";
-
-
-  for(let r=0;r<3;r++){
-
-    for(let c=0;c<5;c++){
-
-      const cell =
-        grid[c][r];
-
-
-      const div =
-        document
-          .createElement(
-            "div"
-          );
-
-
-      div.className =
-        "cell" +
-        (
-          wins.has(
-            c + "-" + r
-          )
-          ? " win"
-          : ""
-        );
-
-
-      const icon =
-        document
-          .createElement(
-            "img"
-          );
-
-
-      icon.src =
-        cell.image;
-
-      icon.alt =
-        cell.id;
-
-      icon.className =
-        "symbol-img";
-
-
-      /* Falls PNG fehlt */
-
-      icon.onerror = () => {
-
-        icon.style.display =
-          "none";
-
-        div.textContent =
-          "?";
-      };
-
-
-      div.appendChild(
-        icon
-      );
-
-
-      if(cell.bonus){
-
-        const bonus =
-          document
-            .createElement(
-              "span"
-            );
-
-
-        bonus.className =
-          "bonus";
-
-
-        bonus.textContent =
-          short(
-            cell.bonus
-          );
-
-
-        div.appendChild(
-          bonus
-        );
-      }
-
-
-      div.style.gridColumn =
-        String(c+1);
-
-
-      div.style.gridRow =
-        String(r+1);
-
-
-      reelsEl.appendChild(
-        div
-      );
+      cards.innerHTML =
+        cardBackHTML()+cardBackHTML();
     }
   }
 }
 
+function renderCommunity(){
+  const html = [];
+
+  for(let i=0;i<5;i++){
+    if(community[i]){
+      html.push(cardHTML(community[i]));
+    }else{
+      html.push(`<div class="card empty-card"></div>`);
+    }
+  }
+
+  communityCardsEl.innerHTML = html.join("");
+}
+
 
 /* =========================
-   ANZEIGE
+   GESAMT-UI
 ========================= */
 
 function updateUI(){
+  potValue.textContent = fmt(pot);
 
-  balanceValue.textContent =
-    fmt(
-      state.balance
-    );
+  balanceValue.textContent = fmt(players[0].stack);
+  bottomBalance.textContent = fmt(players[0].stack);
 
+  blindValue.textContent =
+    `${fmt(SMALL_BLIND)} / ${fmt(BIG_BLIND)}`;
 
   betValue.textContent =
-    fmt(
-      BETS[
-        state.betIndex
-      ]
+    fmt(players[0].betStreet);
+
+  winValue.textContent =
+    fmt(lastWin);
+
+  const need =
+    Math.max(
+      0,
+      currentBet - players[0].betStreet
     );
 
+  callAmount.textContent =
+    need>0 ? fmt(need) : "";
 
-  jackpotValue.textContent =
-    fmt(
-      state.jackpot
-    );
-
-
-  if(
-    state.freeSpins > 0
-  ){
-
-    freeSpinsEl
-      .classList
-      .remove(
-        "hidden"
-      );
-
-
-    const strong =
-      freeSpinsEl
-        .querySelector(
-          "strong"
-        );
-
-
-    if(strong){
-
-      strong.textContent =
-        state.freeSpins;
-    }
-
-  }else{
-
-    freeSpinsEl
-      .classList
-      .add(
-        "hidden"
-      );
-  }
-
-
+  updatePlayerBoxes();
   saveState();
 }
 
 
 /* =========================
-   PAUSE
+   RESET STREET
 ========================= */
 
-function sleep(ms){
+function resetStreetBets(){
+  for(const p of players){
+    p.betStreet = 0;
+    p.acted = false;
+  }
 
-  return new Promise(
-    resolve =>
-      setTimeout(
-        resolve,
-        ms
-      )
+  currentBet = 0;
+}
+
+
+/* =========================
+   BET HELPER
+========================= */
+
+function commitChips(player,amount){
+  const pay = Math.min(amount,player.stack);
+
+  player.stack -= pay;
+  player.betStreet += pay;
+  player.contributed += pay;
+  pot += pay;
+
+  if(player.stack===0){
+    player.allIn = true;
+  }
+
+  if(player.betStreet>currentBet){
+    currentBet = player.betStreet;
+  }
+
+  return pay;
+}
+
+
+/* =========================
+   BLINDS
+========================= */
+
+function nextSeat(i){
+  return (i+1)%4;
+}
+
+function postBlinds(){
+  const sb = nextSeat(persistent.dealer);
+  const bb = nextSeat(sb);
+
+  commitChips(players[sb],SMALL_BLIND);
+  commitChips(players[bb],BIG_BLIND);
+
+  currentBet = BIG_BLIND;
+
+  setPlayerAction(sb,`SB ${fmt(SMALL_BLIND)}`);
+  setPlayerAction(bb,`BB ${fmt(BIG_BLIND)}`);
+
+  currentPlayer = nextSeat(bb);
+}
+
+
+/* =========================
+   DEAL
+========================= */
+
+function dealHoleCards(){
+  for(let round=0;round<2;round++){
+    for(let i=0;i<4;i++){
+      players[i].hand.push(drawCard());
+    }
+  }
+}
+
+
+/* =========================
+   AKTIVE SPIELER
+========================= */
+
+function activePlayers(){
+  return players.filter(p=>!p.folded);
+}
+
+function activeNotAllIn(){
+  return players.filter(
+    p=>!p.folded && !p.allIn
+  );
+}
+
+function onlyOneLeft(){
+  return activePlayers().length===1;
+}
+
+
+/* =========================
+   BETTING ROUND ENDE?
+========================= */
+
+function bettingRoundComplete(){
+  const active = activeNotAllIn();
+
+  if(active.length===0){
+    return true;
+  }
+
+  return active.every(
+    p =>
+      p.acted &&
+      p.betStreet===currentBet
   );
 }
 
 
 /* =========================
-   WALZENBEWEGUNG
+   NÄCHSTER SPIELER
 ========================= */
 
-async function animateReels(
-  targetGrid
-){
-
-  let shown =
-    makeGrid();
-
-
-  /*
-    Jede Walze stoppt
-    etwas später.
-  */
-
-  const stopTimes = [
-    550,
-    800,
-    1080,
-    1390,
-    1740
-  ];
-
-
-  const start =
-    performance.now();
-
-
-  const stopped = [
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
-
-
-  while(true){
-
-    const elapsed =
-      performance.now() -
-      start;
-
-
-    for(
-      let c=0;
-      c<5;
-      c++
-    ){
-
-      /*
-        Walze soll jetzt
-        stoppen
-      */
-
-      if(
-        elapsed >=
-        stopTimes[c]
-      ){
-
-        if(
-          !stopped[c]
-        ){
-
-          shown[c] =
-            targetGrid[c]
-              .map(
-                cell =>
-                  ({...cell})
-              );
-
-
-          stopped[c] =
-            true;
-        }
-
-
-        continue;
-      }
-
-
-      /*
-        Walze läuft noch
-      */
-
-      for(
-        let r=0;
-        r<3;
-        r++
-      ){
-
-        const base =
-          weightedPick(
-            allowedSymbolsForReel(c)
-          );
-
-
-        shown[c][r] = {
-          ...base,
-          bonus:0
-        };
-      }
-    }
-
-
-    renderGrid(
-      shown
-    );
-
+function nextActivePlayer(from){
+  for(let n=1;n<=4;n++){
+    const idx = (from+n)%4;
+    const p = players[idx];
 
     if(
-      stopped
-        .every(Boolean)
+      !p.folded &&
+      !p.allIn
     ){
-
-      break;
+      return idx;
     }
-
-
-    /*
-      Am Anfang schnell,
-      zum Ende minimal
-      langsamer.
-    */
-
-    const delay =
-      elapsed < 900
-        ? 42
-        : 58;
-
-
-    await sleep(
-      delay
-    );
   }
 
-
-  renderGrid(
-    targetGrid
-  );
+  return -1;
 }
 
 
 /* =========================
-   EIN SPIN
+   HERO BUTTONS
 ========================= */
 
-async function spin(
-  oneOfAuto=false
-){
+function disableActionButtons(disabled=true){
+  foldBtn.disabled = disabled;
+  checkBtn.disabled = disabled;
+  callBtn.disabled = disabled;
+  raiseBtn.disabled = disabled;
+}
 
-  if(spinning){
-    return;
-  }
-
-
-  const bet =
-    BETS[
-      state.betIndex
-    ];
-
-
-  const isFree =
-    state.freeSpins > 0;
-
+function prepareHeroButtons(){
+  const hero = players[0];
 
   if(
-    !isFree &&
-    state.balance < bet
+    !handRunning ||
+    hero.folded ||
+    hero.allIn ||
+    currentPlayer!==0
   ){
-
-    message.textContent =
-      "Nicht genug Coins. Tippe auf COINS +.";
-
+    disableActionButtons(true);
     return;
   }
 
-
-  spinning = true;
-
-
-  const spinBtn =
-    $("spinBtn");
-
-
-  if(spinBtn){
-
-    spinBtn.disabled =
-      true;
-  }
-
-
-  if(isFree){
-
-    state.freeSpins--;
-
-  }else{
-
-    state.balance -=
-      bet;
-
-
-    state.stats.wagered +=
-      bet;
-  }
-
-
-  state.stats.spins++;
-
-
-  state.jackpot +=
-    Math.round(
-      bet * 0.002
+  const need =
+    Math.max(
+      0,
+      currentBet - hero.betStreet
     );
 
+  foldBtn.disabled = false;
+  raiseBtn.disabled = false;
 
-  const grid =
-    makeGrid();
+  if(need===0){
+    checkBtn.disabled = false;
+    callBtn.disabled = true;
+  }else{
+    checkBtn.disabled = true;
+    callBtn.disabled = false;
+  }
+}
 
 
-  await animateReels(
-    grid
-  );
+/* =========================
+   PREFLOP-STÄRKE BOT
+========================= */
 
+function preflopStrength(hand){
+  const [a,b] = hand;
+
+  const high = Math.max(a.value,b.value);
+  const low = Math.min(a.value,b.value);
+
+  let score = high;
+
+  if(a.value===b.value){
+    score += 10 + high;
+  }
+
+  if(a.suit===b.suit){
+    score += 2;
+  }
+
+  const gap = Math.abs(a.value-b.value);
+
+  if(gap===1){
+    score += 2;
+  }else if(gap===2){
+    score += 1;
+  }
+
+  if(high===14){
+    score += 3;
+  }
+
+  if(high>=12 && low>=10){
+    score += 3;
+  }
+
+  return score;
+}
+
+
+/* =========================
+   POSTFLOP GROBE STÄRKE
+========================= */
+
+function botHandStrength(player){
+  if(community.length===0){
+    return preflopStrength(player.hand);
+  }
 
   const result =
-    scoreGrid(
-      grid,
-      bet
+    evaluateBestHand(
+      [...player.hand,...community]
     );
 
-
-  state.balance +=
-    result.total;
-
-
-  state.stats.paid +=
-    result.total;
+  return result.category*10 +
+    result.tiebreak[0];
+}
 
 
-  state.stats.biggestWin =
-    Math.max(
-      state.stats.biggestWin,
-      result.total
-    );
+/* =========================
+   BOT ENTSCHEIDUNG
+========================= */
 
+async function botAct(i){
+  const p = players[i];
 
   if(
-    result.freeAward
+    p.folded ||
+    p.allIn
   ){
-
-    state.freeSpins +=
-      result.freeAward;
-
-
-    state.stats
-      .freeSpinsWon +=
-      result.freeAward;
+    return;
   }
 
+  await sleep(550 + Math.random()*500);
 
-  /*
-    Gewinner werden
-    mit "win" markiert.
-    Das CSS vergrößert
-    diese Symbole.
-  */
-
-  renderGrid(
-    grid,
-    result.wins
-  );
-
-
-  winValue.textContent =
-    fmt(
-      result.total
+  const need =
+    Math.max(
+      0,
+      currentBet-p.betStreet
     );
 
+  const strength =
+    botHandStrength(p);
+
+  const style =
+    BOT_STYLE[i];
+
+  let foldThreshold = 10;
+  let raiseThreshold = 22;
+
+  if(style==="careful"){
+    foldThreshold = 12;
+    raiseThreshold = 25;
+  }
+
+  if(style==="aggressive"){
+    foldThreshold = 8;
+    raiseThreshold = 18;
+  }
+
+  const randomness =
+    Math.random()*6;
+
+  const adjusted =
+    strength + randomness;
 
   if(
-    result.freeAward
+    need>0 &&
+    adjusted<foldThreshold &&
+    need>Math.max(BIG_BLIND,p.stack*.12)
   ){
-
-    message.textContent =
-      "🎪 JOKER AUF WALZE 1 · 3 · 5 — 10 FREISPIELE!";
-
+    p.folded = true;
+    p.acted = true;
+    setPlayerAction(i,"PASSEN");
 
   }else if(
-    result.total >=
-    bet * 50
+    adjusted>raiseThreshold &&
+    p.stack>need+BIG_BLIND*2
   ){
+    const raiseTo =
+      Math.max(
+        currentBet+BIG_BLIND*2,
+        currentBet*2
+      );
 
-    message.textContent =
-      `🎉 HUGE WIN: ${short(result.total)}`;
+    const amount =
+      raiseTo-p.betStreet;
 
+    commitChips(p,amount);
 
-  }else if(
-    result.total > 0
-  ){
+    for(const other of players){
+      if(other.id!==i && !other.folded){
+        other.acted = false;
+      }
+    }
 
-    message.textContent =
-      `Gewinn: ${short(result.total)}`;
+    p.acted = true;
 
+    setPlayerAction(
+      i,
+      `ERHÖHEN ${fmt(p.betStreet)}`
+    );
+
+  }else if(need>0){
+
+    commitChips(p,need);
+    p.acted = true;
+
+    setPlayerAction(
+      i,
+      `MITGEHEN ${fmt(need)}`
+    );
 
   }else{
 
-    message.textContent =
-      isFree
-      ? "Freispin ohne Gewinn."
-      : "Kein Gewinn.";
+    p.acted = true;
+    setPlayerAction(i,"CHECK");
   }
 
+  updateUI();
+}
+
+
+/* =========================
+   HERO AKTIONEN
+========================= */
+
+async function heroFold(){
+  if(currentPlayer!==0) return;
+
+  players[0].folded = true;
+  players[0].acted = true;
+  heroFolded = true;
+
+  heroAction.textContent = "PASSEN";
+
+  raisePanel.classList.add("hidden");
 
   updateUI();
 
+  await continueAction();
+}
 
-  spinning =
-    false;
+async function heroCheck(){
+  if(currentPlayer!==0) return;
 
-
-  if(spinBtn){
-
-    spinBtn.disabled =
-      false;
-  }
-
-
-  /*
-    Freispiele automatisch
-    nacheinander
-  */
-
-  if(
-    !oneOfAuto &&
-    state.freeSpins > 0
-  ){
-
-    /*
-      Gewinnsymbole bleiben
-      kurz sichtbar.
-    */
-
-    await sleep(
-      850
+  const need =
+    Math.max(
+      0,
+      currentBet-players[0].betStreet
     );
 
+  if(need!==0) return;
 
-    spin();
+  players[0].acted = true;
+  heroAction.textContent = "CHECK";
+
+  raisePanel.classList.add("hidden");
+
+  updateUI();
+
+  await continueAction();
+}
+
+async function heroCall(){
+  if(currentPlayer!==0) return;
+
+  const need =
+    Math.max(
+      0,
+      currentBet-players[0].betStreet
+    );
+
+  commitChips(players[0],need);
+
+  players[0].acted = true;
+
+  heroAction.textContent =
+    `MITGEHEN ${fmt(need)}`;
+
+  raisePanel.classList.add("hidden");
+
+  updateUI();
+
+  await continueAction();
+}
+
+async function heroRaise(multiplier){
+  if(currentPlayer!==0) return;
+
+  const hero = players[0];
+
+  let target;
+
+  if(multiplier==="allin"){
+    target =
+      hero.betStreet+hero.stack;
+  }else{
+    target =
+      Math.max(
+        BIG_BLIND*Number(multiplier),
+        currentBet*Number(multiplier)
+      );
+  }
+
+  target =
+    Math.min(
+      target,
+      hero.betStreet+hero.stack
+    );
+
+  if(target<=currentBet){
+    return;
+  }
+
+  const amount =
+    target-hero.betStreet;
+
+  commitChips(hero,amount);
+
+  for(const p of players){
+    if(p.id!==0 && !p.folded){
+      p.acted = false;
+    }
+  }
+
+  hero.acted = true;
+
+  heroAction.textContent =
+    multiplier==="allin"
+      ? "ALL-IN"
+      : `ERHÖHEN ${fmt(target)}`;
+
+  raisePanel.classList.add("hidden");
+
+  updateUI();
+
+  await continueAction();
+}
+
+
+/* =========================
+   ACTION LOOP
+========================= */
+
+async function continueAction(){
+  if(onlyOneLeft()){
+    await finishByFold();
+    return;
+  }
+
+  if(bettingRoundComplete()){
+    await advanceStreet();
+    return;
+  }
+
+  currentPlayer =
+    nextActivePlayer(currentPlayer);
+
+  if(currentPlayer===-1){
+    await advanceStreet();
+    return;
+  }
+
+  updateUI();
+
+  if(currentPlayer===0){
+    prepareHeroButtons();
+    message.textContent = "Du bist dran.";
+    return;
+  }
+
+  disableActionButtons(true);
+
+  await botAct(currentPlayer);
+
+  await continueAction();
+}
+
+
+/* =========================
+   STREET WEITER
+========================= */
+
+async function advanceStreet(){
+  disableActionButtons(true);
+
+  await sleep(500);
+
+  if(street==="preflop"){
+    street = "flop";
+
+    community.push(
+      drawCard(),
+      drawCard(),
+      drawCard()
+    );
+
+    message.textContent = "FLOP";
+
+  }else if(street==="flop"){
+    street = "turn";
+
+    community.push(drawCard());
+
+    message.textContent = "TURN";
+
+  }else if(street==="turn"){
+    street = "river";
+
+    community.push(drawCard());
+
+    message.textContent = "RIVER";
+
+  }else if(street==="river"){
+    await showdown();
+    return;
+  }
+
+  renderCommunity();
+
+  resetStreetBets();
+
+  const first =
+    nextActivePlayer(
+      persistent.dealer
+    );
+
+  currentPlayer =
+    first===-1 ? 0 : first;
+
+  updateUI();
+
+  await sleep(450);
+
+  if(
+    activeNotAllIn().length<=1
+  ){
+    await runOutBoard();
+    return;
+  }
+
+  if(currentPlayer===0){
+    prepareHeroButtons();
+    message.textContent =
+      `${street.toUpperCase()} · Du bist dran.`;
+  }else{
+    await botAct(currentPlayer);
+    await continueAction();
   }
 }
 
 
 /* =========================
-   AUTO ×10
+   BOARD BIS RIVER
 ========================= */
 
-async function autoSpins(n){
+async function runOutBoard(){
+  disableActionButtons(true);
 
-  if(spinning){
-    return;
+  while(community.length<5){
+    await sleep(450);
+    community.push(drawCard());
+    renderCommunity();
   }
 
+  await showdown();
+}
 
-  for(
-    let i=0;
-    i<n;
-    i++
-  ){
 
-    if(
-      state.balance <
-      BETS[state.betIndex] &&
-      state.freeSpins === 0
-    ){
+/* =========================
+   FOLD-GEWINN
+========================= */
 
-      break;
+async function finishByFold(){
+  const winner =
+    activePlayers()[0];
+
+  winner.stack += pot;
+
+  const wonPot = pot;
+
+  lastWin =
+    winner.id===0
+      ? wonPot
+      : 0;
+
+  persistent.stats.biggestPot =
+    Math.max(
+      persistent.stats.biggestPot,
+      wonPot
+    );
+
+  if(winner.id===0){
+    persistent.stats.wins++;
+    message.textContent =
+      `Du gewinnst ${fmt(wonPot)} Coins.`;
+  }else{
+    persistent.stats.losses++;
+    message.textContent =
+      `${winner.name} gewinnt ${fmt(wonPot)} Coins.`;
+  }
+
+  persistent.stats.hands++;
+
+  pot = 0;
+  handRunning = false;
+
+  highlightWinner(winner.id);
+
+  updateUI();
+
+  newHandBtn.disabled = false;
+}
+
+
+/* =========================
+   HAND EVALUATION
+========================= */
+
+function combinations(arr,k){
+  const out = [];
+
+  function rec(start,pick){
+    if(pick.length===k){
+      out.push([...pick]);
+      return;
     }
 
-
-    await spin(true);
-
-
-    await sleep(
-      300
-    );
-  }
-}
-
-
-/* =========================
-   EINSATZ ÄNDERN
-========================= */
-
-function setBet(delta){
-
-  if(spinning){
-    return;
+    for(let i=start;i<arr.length;i++){
+      pick.push(arr[i]);
+      rec(i+1,pick);
+      pick.pop();
+    }
   }
 
-
-  state.betIndex =
-    Math.min(
-      BETS.length - 1,
-
-      Math.max(
-        0,
-
-        state.betIndex +
-        delta
-      )
-    );
-
-
-  updateUI();
+  rec(0,[]);
+  return out;
 }
 
+function evaluateFive(cards){
+  const values =
+    cards
+      .map(c=>c.value)
+      .sort((a,b)=>b-a);
 
-/* =========================
-   COINS
-========================= */
+  const suits =
+    cards.map(c=>c.suit);
 
-function addCoins(amount){
+  const counts = {};
+
+  for(const v of values){
+    counts[v] =
+      (counts[v]||0)+1;
+  }
+
+  const groups =
+    Object.entries(counts)
+      .map(([v,c])=>({
+        value:Number(v),
+        count:c
+      }))
+      .sort(
+        (a,b)=>
+          b.count-a.count ||
+          b.value-a.value
+      );
+
+  const flush =
+    suits.every(
+      s=>s===suits[0]
+    );
+
+  const unique =
+    [...new Set(values)];
+
+  let straightHigh = 0;
 
   if(
-    !Number
-      .isFinite(amount) ||
-    amount <= 0
+    unique.includes(14) &&
+    unique.includes(5) &&
+    unique.includes(4) &&
+    unique.includes(3) &&
+    unique.includes(2)
   ){
+    straightHigh = 5;
+  }else{
+    for(let i=0;i<=unique.length-5;i++){
+      if(
+        unique[i]-
+        unique[i+4]===4
+      ){
+        straightHigh =
+          unique[i];
+        break;
+      }
+    }
+  }
 
+  if(flush && straightHigh){
+    return {
+      category:8,
+      name:"Straight Flush",
+      tiebreak:[straightHigh]
+    };
+  }
+
+  if(groups[0].count===4){
+    return {
+      category:7,
+      name:"Vierling",
+      tiebreak:[
+        groups[0].value,
+        groups[1].value
+      ]
+    };
+  }
+
+  if(
+    groups[0].count===3 &&
+    groups[1].count===2
+  ){
+    return {
+      category:6,
+      name:"Full House",
+      tiebreak:[
+        groups[0].value,
+        groups[1].value
+      ]
+    };
+  }
+
+  if(flush){
+    return {
+      category:5,
+      name:"Flush",
+      tiebreak:values
+    };
+  }
+
+  if(straightHigh){
+    return {
+      category:4,
+      name:"Straight",
+      tiebreak:[straightHigh]
+    };
+  }
+
+  if(groups[0].count===3){
+    const kickers =
+      groups
+        .filter(g=>g.count===1)
+        .map(g=>g.value)
+        .sort((a,b)=>b-a);
+
+    return {
+      category:3,
+      name:"Drilling",
+      tiebreak:[
+        groups[0].value,
+        ...kickers
+      ]
+    };
+  }
+
+  if(
+    groups[0].count===2 &&
+    groups[1].count===2
+  ){
+    const pairs =
+      [groups[0].value,groups[1].value]
+        .sort((a,b)=>b-a);
+
+    const kicker =
+      groups.find(g=>g.count===1)?.value || 0;
+
+    return {
+      category:2,
+      name:"Zwei Paare",
+      tiebreak:[
+        ...pairs,
+        kicker
+      ]
+    };
+  }
+
+  if(groups[0].count===2){
+    const kickers =
+      groups
+        .filter(g=>g.count===1)
+        .map(g=>g.value)
+        .sort((a,b)=>b-a);
+
+    return {
+      category:1,
+      name:"Ein Paar",
+      tiebreak:[
+        groups[0].value,
+        ...kickers
+      ]
+    };
+  }
+
+  return {
+    category:0,
+    name:"High Card",
+    tiebreak:values
+  };
+}
+
+function compareEval(a,b){
+  if(a.category!==b.category){
+    return a.category-b.category;
+  }
+
+  const len =
+    Math.max(
+      a.tiebreak.length,
+      b.tiebreak.length
+    );
+
+  for(let i=0;i<len;i++){
+    const av = a.tiebreak[i]||0;
+    const bv = b.tiebreak[i]||0;
+
+    if(av!==bv){
+      return av-bv;
+    }
+  }
+
+  return 0;
+}
+
+function evaluateBestHand(cards){
+  const combos =
+    combinations(cards,5);
+
+  let best = null;
+
+  for(const combo of combos){
+    const ev =
+      evaluateFive(combo);
+
+    if(
+      !best ||
+      compareEval(ev,best)>0
+    ){
+      best = ev;
+    }
+  }
+
+  return best;
+}
+
+
+/* =========================
+   SHOWDOWN
+========================= */
+
+async function showdown(){
+  disableActionButtons(true);
+
+  renderHands(true);
+
+  const contenders =
+    activePlayers();
+
+  const evaluated =
+    contenders.map(p=>({
+      player:p,
+      eval:evaluateBestHand(
+        [...p.hand,...community]
+      )
+    }));
+
+  let best =
+    evaluated[0];
+
+  let winners = [best];
+
+  for(let i=1;i<evaluated.length;i++){
+    const cmp =
+      compareEval(
+        evaluated[i].eval,
+        best.eval
+      );
+
+    if(cmp>0){
+      best = evaluated[i];
+      winners = [evaluated[i]];
+    }else if(cmp===0){
+      winners.push(evaluated[i]);
+    }
+  }
+
+  const share =
+    Math.floor(
+      pot/winners.length
+    );
+
+  for(const w of winners){
+    w.player.stack += share;
+  }
+
+  const wonPot = pot;
+
+  persistent.stats.biggestPot =
+    Math.max(
+      persistent.stats.biggestPot,
+      wonPot
+    );
+
+  const heroWon =
+    winners.some(
+      w=>w.player.id===0
+    );
+
+  lastWin =
+    heroWon
+      ? share
+      : 0;
+
+  if(heroWon){
+    persistent.stats.wins++;
+  }else{
+    persistent.stats.losses++;
+  }
+
+  persistent.stats.hands++;
+
+  const winnerNames =
+    winners
+      .map(w=>w.player.name)
+      .join(" + ");
+
+  message.textContent =
+    `${winnerNames} gewinnt mit ${best.eval.name} · Pot ${fmt(wonPot)}`;
+
+  for(const w of winners){
+    highlightWinner(
+      w.player.id
+    );
+  }
+
+  pot = 0;
+  handRunning = false;
+
+  updateUI();
+
+  newHandBtn.disabled = false;
+}
+
+
+/* =========================
+   WINNER HIGHLIGHT
+========================= */
+
+function clearWinnerClasses(){
+  for(let i=0;i<4;i++){
+    playerEl(i)?.classList.remove("winner");
+  }
+}
+
+function highlightWinner(i){
+  playerEl(i)?.classList.add("winner");
+}
+
+
+/* =========================
+   NEUE HAND
+========================= */
+
+async function startHand(){
+  if(handRunning) return;
+
+  clearWinnerClasses();
+
+  for(const p of players){
+    p.hand = [];
+    p.folded = false;
+    p.allIn = false;
+    p.betStreet = 0;
+    p.contributed = 0;
+    p.acted = false;
+  }
+
+  heroFolded = false;
+  lastWin = 0;
+
+  pot = 0;
+  community = [];
+
+  street = "preflop";
+  currentBet = 0;
+
+  deck = shuffle(createDeck());
+
+  dealHoleCards();
+
+  renderHands(false);
+  renderCommunity();
+
+  for(let i=0;i<4;i++){
+    setPlayerAction(i,"");
+  }
+
+  postBlinds();
+
+  handRunning = true;
+
+  newHandBtn.disabled = true;
+
+  message.textContent = "Neue Hand.";
+
+  updateUI();
+
+  await sleep(500);
+
+  if(currentPlayer===0){
+    prepareHeroButtons();
+    message.textContent = "Du bist dran.";
+  }else{
+    disableActionButtons(true);
+    await botAct(currentPlayer);
+    await continueAction();
+  }
+}
+
+
+/* =========================
+   NEUES SPIEL
+========================= */
+
+function resetGame(){
+  if(
+    !confirm(
+      "Komplettes Pokerspiel zurücksetzen?"
+    )
+  ){
     return;
   }
 
+  persistent.stacks = [
+    STARTING_STACK,
+    STARTING_STACK,
+    STARTING_STACK,
+    STARTING_STACK
+  ];
 
-  state.balance +=
-    Math.floor(
-      amount
-    );
+  persistent.dealer = 0;
+  persistent.stats = freshStats();
 
+  buildPlayers();
+
+  pot = 0;
+  community = [];
+  street = "idle";
+  currentBet = 0;
+  lastWin = 0;
+  handRunning = false;
+
+  renderHands(false);
+  renderCommunity();
 
   message.textContent =
-    `${short(amount)} virtuelle Coins hinzugefügt.`;
-
+    "Drücke „NEUE RUNDE“";
 
   updateUI();
 }
 
 
 /* =========================
-   STATISTIK
+   STATS
 ========================= */
 
 function showStats(){
+  statHands.textContent =
+    fmt(
+      persistent.stats.hands
+    );
 
-  const s =
-    state.stats;
+  statWins.textContent =
+    fmt(
+      persistent.stats.wins
+    );
 
+  statLosses.textContent =
+    fmt(
+      persistent.stats.losses
+    );
 
-  const rtp =
-    s.wagered > 0
+  statBiggestPot.textContent =
+    fmt(
+      persistent.stats.biggestPot
+    );
 
-    ? (
-        s.paid /
-        s.wagered *
-        100
-      )
-
-    : 0;
-
-
-  $("statsContent")
-    .innerHTML = `
-
-    <div class="stat-grid">
-
-      <div class="statbox">
-        <span>Spins</span>
-        <strong>
-          ${fmt(s.spins)}
-        </strong>
-      </div>
-
-      <div class="statbox">
-        <span>Gesamteinsatz</span>
-        <strong>
-          ${short(s.wagered)}
-        </strong>
-      </div>
-
-      <div class="statbox">
-        <span>Auszahlungen</span>
-        <strong>
-          ${short(s.paid)}
-        </strong>
-      </div>
-
-      <div class="statbox">
-        <span>Session-RTP</span>
-        <strong>
-          ${
-            rtp
-              .toFixed(2)
-              .replace(".",",")
-          } %
-        </strong>
-      </div>
-
-      <div class="statbox">
-        <span>Größter Gewinn</span>
-        <strong>
-          ${short(s.biggestWin)}
-        </strong>
-      </div>
-
-      <div class="statbox">
-        <span>Freispiele erhalten</span>
-        <strong>
-          ${fmt(s.freeSpinsWon)}
-        </strong>
-      </div>
-
-    </div>
-  `;
-
-
-  $("statsDialog")
-    .showModal();
+  statsDialog.showModal();
 }
 
 
 /* =========================
-   BUTTONS VERBINDEN
+   EVENTS
 ========================= */
 
-function bindButtons(){
+foldBtn.addEventListener(
+  "click",
+  heroFold
+);
 
-  $("spinBtn")
-    .addEventListener(
-      "click",
-      () => spin()
-    );
+checkBtn.addEventListener(
+  "click",
+  heroCheck
+);
 
+callBtn.addEventListener(
+  "click",
+  heroCall
+);
 
-  $("auto10")
-    .addEventListener(
-      "click",
-      () =>
-        autoSpins(10)
-    );
-
-
-  $("betDown")
-    .addEventListener(
-      "click",
-      () =>
-        setBet(-1)
-    );
-
-
-  $("betUp")
-    .addEventListener(
-      "click",
-      () =>
-        setBet(1)
-    );
-
-
-  $("addCoinsBtn")
-    .addEventListener(
-      "click",
-      () =>
-        $("coinsDialog")
-          .showModal()
-    );
-
-
-  $("statsBtn")
-    .addEventListener(
-      "click",
-      showStats
-    );
-
-
-  $("rulesBtn")
-    .addEventListener(
-      "click",
-      () =>
-        $("rulesDialog")
-          .showModal()
-    );
-
-
-  document
-    .querySelectorAll(
-      "[data-add]"
-    )
-    .forEach(
-      btn => {
-
-        btn.addEventListener(
-          "click",
-          () =>
-            addCoins(
-              Number(
-                btn.dataset.add
-              )
-            )
-        );
-      }
-    );
-
-
-  $("customCoinsBtn")
-    .addEventListener(
-      "click",
-      () => {
-
-        addCoins(
-          Number(
-            $("customCoins")
-              .value
-          )
-        );
-
-
-        $("customCoins")
-          .value = "";
-      }
-    );
-
-
-  $("resetStatsBtn")
-    .addEventListener(
-      "click",
-      () => {
-
-        if(
-          confirm(
-            "Statistik wirklich zurücksetzen?"
-          )
-        ){
-
-          state.stats = {
-            spins:0,
-            wagered:0,
-            paid:0,
-            biggestWin:0,
-            freeSpinsWon:0
-          };
-
-
-          saveState();
-
-          showStats();
-        }
-      }
-    );
-}
-
-
-/* =========================
-   START DER APP
-========================= */
-
-function init(){
-
-  reelsEl =
-    $("reels");
-
-  balanceValue =
-    $("balanceValue");
-
-  betValue =
-    $("betValue");
-
-  winValue =
-    $("winValue");
-
-  jackpotValue =
-    $("jackpotValue");
-
-  message =
-    $("message");
-
-  freeSpinsEl =
-    $("freeSpins");
-
-
-  bindButtons();
-
-
-  renderGrid(
-    makeGrid()
-  );
-
-
-  updateUI();
-
-
-  if(
-    "serviceWorker"
-    in navigator
-  ){
-
-    navigator
-      .serviceWorker
-      .register("sw.js")
-      .catch(
-        () => {}
-      );
+raiseBtn.addEventListener(
+  "click",
+  ()=>{
+    if(
+      currentPlayer===0 &&
+      handRunning
+    ){
+      raisePanel.classList.toggle("hidden");
+    }
   }
-}
+);
 
-
-/*
-  Funktioniert egal,
-  ob app.js oben oder
-  unten in index.html steht.
-*/
-
-if(
-  document.readyState ===
-  "loading"
-){
-
-  document
-    .addEventListener(
-      "DOMContentLoaded",
-      init
+document
+  .querySelectorAll("[data-raise]")
+  .forEach(btn=>{
+    btn.addEventListener(
+      "click",
+      ()=>heroRaise(
+        btn.dataset.raise
+      )
     );
+  });
 
-}else{
+newHandBtn.addEventListener(
+  "click",
+  async ()=>{
+    persistent.dealer =
+      (persistent.dealer+1)%4;
 
-  init();
-}
+    await startHand();
+  }
+);
+
+statsBtn.addEventListener(
+  "click",
+  showStats
+);
+
+closeStatsBtn.addEventListener(
+  "click",
+  ()=>statsDialog.close()
+);
+
+newGameBtn.addEventListener(
+  "click",
+  resetGame
+);
+
+
+/* =========================
+   START
+========================= */
+
+disableActionButtons(true);
+
+renderHands(false);
+renderCommunity();
+
+message.textContent =
+  "Drücke „NEUE RUNDE“";
+
+updateUI();
