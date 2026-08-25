@@ -32,9 +32,9 @@ body{
   background:
     linear-gradient(
       rgba(5,2,8,.18),
-      rgba(5,2,8,.42)
+      rgba(5,2,8,.34)
     ),
-    url("circus-bg.jpg");
+    url("./circus-bg.jpg");
 
   background-size:cover;
   background-position:center center;
@@ -44,6 +44,7 @@ body{
 
 body{
   min-height:100vh;
+
   padding:
     env(safe-area-inset-top)
     env(safe-area-inset-right)
@@ -67,9 +68,9 @@ button{
 ========================= */
 
 .app{
-  width:min(96vw,1280px);
+  width:min(84vw,1100px);
   margin:0 auto;
-  padding:10px 12px 14px;
+  padding:8px 10px 12px;
 }
 
 /* =========================
@@ -81,13 +82,14 @@ button{
   justify-content:space-between;
   align-items:center;
   gap:12px;
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
 
 .brand{
   font-weight:1000;
-  font-size:clamp(22px,3vw,38px);
+  font-size:clamp(22px,2.7vw,36px);
   letter-spacing:.5px;
+
   text-shadow:
     0 2px 4px #000,
     0 0 12px #000;
@@ -96,7 +98,7 @@ button{
 .tagline,
 .muted{
   color:var(--muted);
-  font-size:13px;
+  font-size:12px;
   text-shadow:0 1px 3px #000;
 }
 
@@ -106,15 +108,15 @@ button{
 
 .machine{
   border:3px solid var(--gold);
-  border-radius:24px;
+  border-radius:22px;
 
-  padding:10px;
+  padding:8px;
 
   background:
     linear-gradient(
-      rgba(124,33,52,.94),
-      rgba(72,22,45,.94) 26%,
-      rgba(43,19,40,.96) 100%
+      rgba(124,33,52,.92),
+      rgba(72,22,45,.93) 26%,
+      rgba(43,19,40,.95) 100%
     );
 
   box-shadow:
@@ -132,12 +134,12 @@ button{
   align-items:center;
   gap:14px;
 
-  background:#871d2beF;
+  background:#871d2bef;
   border:2px solid var(--gold);
-  border-radius:16px;
+  border-radius:15px;
 
-  padding:7px 12px;
-  margin-bottom:8px;
+  padding:6px 10px;
+  margin-bottom:6px;
 
   font-weight:900;
 
@@ -148,7 +150,7 @@ button{
 
 .jackpot strong{
   color:var(--gold);
-  font-size:clamp(20px,2.6vw,32px);
+  font-size:clamp(20px,2.5vw,31px);
 }
 
 /* =========================
@@ -158,29 +160,24 @@ button{
 .reels{
   display:grid;
 
-  grid-template-columns:
-    repeat(5,1fr);
+  grid-template-columns:repeat(5,1fr);
+  grid-template-rows:repeat(3,1fr);
 
-  grid-template-rows:
-    repeat(3,1fr);
+  gap:5px;
 
-  gap:6px;
+  background:#100910ef;
+  border-radius:15px;
+  padding:6px;
 
-  background:#100910eF;
-
-  border-radius:16px;
-
-  padding:8px;
-
-  height:min(52vh,500px);
-  min-height:310px;
+  height:min(51vh,470px);
+  min-height:250px;
 
   box-shadow:
     inset 0 0 28px #000;
 }
 
 /* =========================
-   EINZELNES SYMBOLFELD
+   EINZELNES FELD
 ========================= */
 
 .cell{
@@ -193,16 +190,15 @@ button{
   min-width:0;
   min-height:0;
 
-  border-radius:12px;
+  border-radius:10px;
 
   background:
     linear-gradient(
-      #4d2a52eF,
+      #4d2a52ef,
       #2b1736f5
     );
 
-  border:
-    1px solid #ffffff22;
+  border:1px solid #ffffff22;
 
   overflow:hidden;
 
@@ -212,7 +208,7 @@ button{
 }
 
 /* =========================
-   SYMBOLBILDER
+   SYMBOLE
 ========================= */
 
 .symbol-img{
@@ -232,7 +228,7 @@ button{
 }
 
 /* =========================
-   GEWINNSYMBOL
+   GEWINNSYMBOLE
 ========================= */
 
 .cell.win{
@@ -261,7 +257,6 @@ button{
 }
 
 @keyframes winPop{
-
   0%,
   100%{
     transform:scale(1);
@@ -273,7 +268,7 @@ button{
 }
 
 /* =========================
-   BONUS-WERT AUF SYMBOL
+   BONUS-WERT
 ========================= */
 
 .cell .bonus{
@@ -282,13 +277,11 @@ button{
   bottom:3px;
   left:50%;
 
-  transform:
-    translateX(-50%);
+  transform:translateX(-50%);
 
   background:#9e2933;
 
-  border:
-    1px solid var(--gold);
+  border:1px solid var(--gold);
 
   border-radius:999px;
 
@@ -313,13 +306,11 @@ button{
 
   width:max-content;
 
-  padding:
-    3px 20px;
+  padding:3px 20px;
 
   background:#a72c32;
 
-  border-radius:
-    0 0 12px 12px;
+  border-radius:0 0 12px 12px;
 
   font-weight:900;
   font-size:12px;
@@ -332,28 +323,25 @@ button{
 .meters{
   display:grid;
 
-  grid-template-columns:
-    repeat(3,1fr);
+  grid-template-columns:repeat(3,1fr);
 
-  gap:7px;
+  gap:6px;
 
-  margin-top:7px;
+  margin-top:6px;
 }
 
 .meter{
-  background:#26313aeF;
+  background:#26313aef;
 
-  border:
-    1px solid #ffffff33;
+  border:1px solid #ffffff33;
 
   border-radius:10px;
 
-  padding:7px 10px;
+  padding:6px 9px;
 
   min-width:0;
 
-  box-shadow:
-    0 3px 10px #0005;
+  box-shadow:0 3px 10px #0005;
 }
 
 .meter span{
@@ -361,15 +349,14 @@ button{
 
   color:#f6c46d;
 
-  font-size:11px;
+  font-size:10px;
   font-weight:800;
 }
 
 .meter strong{
   display:block;
 
-  font-size:
-    clamp(15px,2vw,23px);
+  font-size:clamp(14px,1.9vw,22px);
 
   white-space:nowrap;
   overflow:hidden;
@@ -383,12 +370,11 @@ button{
 .controls{
   display:grid;
 
-  grid-template-columns:
-    72px 72px 1fr;
+  grid-template-columns:66px 66px 1fr;
 
-  gap:7px;
+  gap:6px;
 
-  margin-top:8px;
+  margin-top:6px;
 }
 
 .control,
@@ -396,10 +382,9 @@ button{
 .dialog-card button{
   border:0;
 
-  border-radius:11px;
+  border-radius:10px;
 
-  padding:
-    10px 13px;
+  padding:9px 12px;
 
   font-weight:900;
 
@@ -407,8 +392,7 @@ button{
 
   background:var(--blue);
 
-  box-shadow:
-    0 4px 0 #0005;
+  box-shadow:0 4px 0 #0005;
 
   cursor:pointer;
 }
@@ -416,11 +400,8 @@ button{
 .control:active,
 .small:active,
 .dialog-card button:active{
-  transform:
-    translateY(2px);
-
-  box-shadow:
-    0 2px 0 #0005;
+  transform:translateY(2px);
+  box-shadow:0 2px 0 #0005;
 }
 
 .control.secondary{
@@ -434,8 +415,7 @@ button{
       #148c2c
     );
 
-  font-size:
-    clamp(22px,3vw,30px);
+  font-size:clamp(22px,2.8vw,29px);
 }
 
 /* =========================
@@ -445,18 +425,16 @@ button{
 .quick-row{
   display:flex;
 
-  gap:7px;
+  gap:6px;
 
   flex-wrap:wrap;
 
-  margin-top:7px;
+  margin-top:6px;
 }
 
 .small{
-  padding:
-    8px 12px;
-
-  font-size:13px;
+  padding:7px 10px;
+  font-size:12px;
 }
 
 /* =========================
@@ -464,19 +442,17 @@ button{
 ========================= */
 
 .message{
-  min-height:25px;
+  min-height:22px;
 
   text-align:center;
 
-  padding:
-    6px 4px 0;
+  padding:5px 4px 0;
 
   color:var(--gold);
 
   font-weight:900;
 
-  text-shadow:
-    0 2px 3px #000;
+  text-shadow:0 2px 3px #000;
 }
 
 /* =========================
@@ -490,18 +466,14 @@ button{
 
   border-radius:999px;
 
-  padding:
-    7px 12px;
+  padding:6px 11px;
 
-  margin:
-    7px auto 0;
+  margin:6px auto 0;
 
   width:max-content;
-
   max-width:100%;
 
-  box-shadow:
-    0 0 12px #0007;
+  box-shadow:0 0 12px #0007;
 }
 
 .hidden{
@@ -509,23 +481,21 @@ button{
 }
 
 /* =========================
-   HINWEIS UNTEN
+   HINWEIS
 ========================= */
 
 .footnote{
-  font-size:12px;
+  font-size:11px;
 
   color:#eee;
 
-  padding:
-    8px 4px;
+  padding:6px 4px;
 
   line-height:1.35;
 
   text-align:center;
 
-  text-shadow:
-    0 2px 4px #000;
+  text-shadow:0 2px 4px #000;
 }
 
 /* =========================
@@ -534,17 +504,12 @@ button{
 
 dialog{
   border:0;
-
   border-radius:18px;
-
   padding:0;
-
   background:transparent;
-
   color:var(--text);
 
-  max-width:
-    min(92vw,700px);
+  max-width:min(90vw,700px);
 }
 
 dialog::backdrop{
@@ -555,20 +520,17 @@ dialog::backdrop{
 .dialog-card{
   background:#251225f7;
 
-  border:
-    1px solid #ffffff22;
+  border:1px solid #ffffff22;
 
   border-radius:18px;
 
   padding:18px;
 
-  min-width:
-    min(88vw,420px);
+  min-width:min(82vw,420px);
 }
 
 .dialog-card.wide{
-  min-width:
-    min(92vw,680px);
+  min-width:min(88vw,680px);
 }
 
 .dialog-card h2{
@@ -586,8 +548,7 @@ dialog::backdrop{
 
   border-radius:10px;
 
-  border:
-    1px solid #ffffff33;
+  border:1px solid #ffffff33;
 
   padding:12px;
 
@@ -598,21 +559,17 @@ dialog::backdrop{
 
 .dialog-card button{
   margin:5px 3px;
-
   background:#2b78a2;
 }
 
 .dialog-card .close{
   background:#56505a;
-
   width:100%;
-
   margin-top:12px;
 }
 
 .dialog-card .danger{
   background:#a52d3e;
-
   width:100%;
 }
 
@@ -622,10 +579,7 @@ dialog::backdrop{
 
 .preset-grid{
   display:grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
+  grid-template-columns:1fr 1fr;
   gap:8px;
 }
 
@@ -635,9 +589,7 @@ dialog::backdrop{
 
 table{
   width:100%;
-
   border-collapse:collapse;
-
   font-size:14px;
 }
 
@@ -647,8 +599,7 @@ td{
 
   padding:7px;
 
-  border-bottom:
-    1px solid #ffffff1a;
+  border-bottom:1px solid #ffffff1a;
 }
 
 th{
@@ -662,8 +613,7 @@ th{
 .stat-grid{
   display:grid;
 
-  grid-template-columns:
-    1fr 1fr;
+  grid-template-columns:1fr 1fr;
 
   gap:8px;
 }
@@ -699,51 +649,38 @@ th{
   }
 
   .app{
-    width:min(96vw,1280px);
-
-    padding:
-      6px 10px 10px;
+    width:min(84vw,1100px);
+    margin:0 auto;
+    padding:5px 8px 8px;
   }
 
   .topbar{
-    margin-bottom:6px;
+    margin-bottom:4px;
   }
 
   .brand{
-    font-size:
-      clamp(20px,2.5vw,34px);
+    font-size:clamp(20px,2.3vw,32px);
   }
 
   .tagline{
-    font-size:12px;
+    font-size:11px;
   }
 
   .machine{
-    padding:8px;
-
-    border-radius:20px;
+    padding:7px;
+    border-radius:19px;
   }
 
   .jackpot{
-    padding:
-      5px 10px;
-
-    margin-bottom:6px;
+    padding:4px 9px;
+    margin-bottom:5px;
   }
 
   .reels{
-    height:
-      min(54vh,500px);
-
-    min-height:270px;
-
-    gap:5px;
-
-    padding:6px;
-  }
-
-  .cell{
-    border-radius:10px;
+    height:min(50vh,450px);
+    min-height:220px;
+    gap:4px;
+    padding:5px;
   }
 
   .symbol-img{
@@ -752,54 +689,51 @@ th{
   }
 
   .meters{
-    margin-top:6px;
+    margin-top:5px;
+    gap:5px;
   }
 
   .meter{
-    padding:
-      5px 8px;
+    padding:5px 7px;
   }
 
   .controls{
-    margin-top:6px;
+    margin-top:5px;
 
     grid-template-columns:
-      68px 68px 1fr;
+      64px 64px 1fr;
   }
 
   .control{
-    padding:
-      8px 10px;
+    padding:8px 9px;
   }
 
   .quick-row{
-    margin-top:6px;
+    margin-top:5px;
   }
 
   .small{
-    padding:
-      7px 10px;
+    padding:6px 9px;
   }
 
   .message{
-    padding-top:4px;
+    padding-top:3px;
+    min-height:20px;
   }
 
   .footnote{
-    padding-top:6px;
+    padding-top:4px;
   }
 }
 
 /* =========================
    HOCHKANT
-   Nur als Übergang
 ========================= */
 
 @media (orientation:portrait){
 
   .app{
     width:min(100%,760px);
-
     padding:8px;
   }
 
@@ -819,19 +753,14 @@ th{
 }
 
 /* =========================
-   SEHR KLEINE QUERFORMAT-
-   BILDSCHIRME
+   KLEINE QUERFORMAT-SCREENS
 ========================= */
 
-@media (
-  orientation:landscape
-)
-and (
-  max-height:500px
-){
+@media (orientation:landscape) and (max-height:500px){
 
   .app{
-    padding-top:3px;
+    width:min(86vw,1000px);
+    padding-top:2px;
   }
 
   .tagline{
@@ -839,48 +768,48 @@ and (
   }
 
   .topbar{
-    margin-bottom:3px;
+    margin-bottom:2px;
   }
 
   .machine{
-    padding:6px;
+    padding:5px;
   }
 
   .jackpot{
     padding:3px 8px;
-    margin-bottom:4px;
+    margin-bottom:3px;
   }
 
   .reels{
-    height:47vh;
-    min-height:200px;
+    height:45vh;
+    min-height:180px;
   }
 
   .meters{
-    gap:5px;
-    margin-top:4px;
+    gap:4px;
+    margin-top:3px;
   }
 
   .meter{
-    padding:4px 7px;
+    padding:4px 6px;
   }
 
   .controls{
-    gap:5px;
-    margin-top:4px;
+    gap:4px;
+    margin-top:3px;
   }
 
   .quick-row{
-    margin-top:4px;
+    margin-top:3px;
   }
 
   .message{
-    min-height:18px;
-    padding-top:3px;
+    min-height:17px;
+    padding-top:2px;
   }
 
   .footnote{
     font-size:10px;
-    padding:4px;
+    padding:3px;
   }
 }
